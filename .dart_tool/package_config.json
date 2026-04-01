@@ -140,12 +140,6 @@
       "languageVersion": "3.1"
     },
     {
-      "name": "fl_chart",
-      "rootUri": "file:///C:/Users/Hamza%20Zehri/AppData/Local/Pub/Cache/hosted/pub.dev/fl_chart-0.68.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.2"
-    },
-    {
       "name": "flutter",
       "rootUri": "file:///C:/flutter/packages/flutter",
       "packageUri": "lib/",
@@ -576,12 +570,6 @@
       "rootUri": "file:///C:/Users/Hamza%20Zehri/AppData/Local/Pub/Cache/hosted/pub.dev/synchronized-3.4.0",
       "packageUri": "lib/",
       "languageVersion": "3.8"
-    },
-    {
-      "name": "telephony",
-      "rootUri": "file:///C:/Users/Hamza%20Zehri/AppData/Local/Pub/Cache/hosted/pub.dev/telephony-0.2.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.15"
     },
     {
       "name": "term_glyph",

@@ -55,8 +55,9 @@ class FeeService {
     final finalTotal = feeRecord.totalAmount + feeRecord.fineAmount - feeRecord.discountAmount;
     final newDue = finalTotal - newPaidAmount;
     String newStatus;
-    if (newPaidAmount <= 0) newStatus = 'unpaid';
-    else if (newDue <= 0) newStatus = 'paid';
+    if (newPaidAmount <= 0) {
+      newStatus = 'unpaid';
+    } else if (newDue <= 0) newStatus = 'paid';
     else newStatus = 'partial';
 
     final updatedRecord = FeeRecord(

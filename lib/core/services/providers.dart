@@ -1,9 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../db/extended_database_helper.dart';
 import '../../models/models.dart';
 
 // Use ExtendedDatabaseHelper as the single source of truth
 final dbProvider = Provider<ExtendedDatabaseHelper>((ref) => ExtendedDatabaseHelper.instance);
+
+// ---- Theme Mode Provider ----
+final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.light);
 
 // ---- School Settings ----
 final schoolSettingsProvider = FutureProvider<SchoolSettings?>((ref) {
@@ -48,6 +52,25 @@ class FeeFilter {
   final int? classId, sectionId, month, year;
   final String? status;
   const FeeFilter({this.classId, this.sectionId, this.month, this.year, this.status});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FeeFilter &&
+          runtimeType == other.runtimeType &&
+          classId == other.classId &&
+          sectionId == other.sectionId &&
+          month == other.month &&
+          year == other.year &&
+          status == other.status;
+
+  @override
+  int get hashCode =>
+      classId.hashCode ^
+      sectionId.hashCode ^
+      month.hashCode ^
+      year.hashCode ^
+      status.hashCode;
 }
 
 // ---- Exams ----

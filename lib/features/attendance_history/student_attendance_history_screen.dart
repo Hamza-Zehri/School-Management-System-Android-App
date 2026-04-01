@@ -29,16 +29,16 @@ class _State extends State<StudentAttendanceHistoryScreen> {
   }
 
   Future<void> _loadStudents() async {
-    final s = await ExtendedExtendedDatabaseHelper.instance.getAllStudents(isActive: null);
+    final s = await ExtendedDatabaseHelper.instance.getAllStudents(isActive: null);
     setState(() => _students = s);
   }
 
   Future<void> _loadHistory() async {
     if (_selected == null) return;
     setState(() => _loading = true);
-    final history = await ExtendedExtendedDatabaseHelper.instance.getStudentAttendanceHistory(
+    final history = await ExtendedDatabaseHelper.instance.getStudentAttendanceHistory(
       studentId: _selected!.id!, fromDate: _fromDate, toDate: _toDate);
-    final summary = await ExtendedExtendedDatabaseHelper.instance.getStudentAttendanceSummary(
+    final summary = await ExtendedDatabaseHelper.instance.getStudentAttendanceSummary(
       _selected!.id!, fromDate: _fromDate, toDate: _toDate);
     setState(() { _history = history; _summary = summary; _loading = false; });
   }
@@ -47,7 +47,11 @@ class _State extends State<StudentAttendanceHistoryScreen> {
     final d = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2020), lastDate: DateTime.now());
     if (d != null) {
       final s = d.toIso8601String().substring(0, 10);
-      setState(() { if (isFrom) _fromDate = s; else _toDate = s; });
+      setState(() { if (isFrom) {
+        _fromDate = s;
+      } else {
+        _toDate = s;
+      } });
     }
   }
 

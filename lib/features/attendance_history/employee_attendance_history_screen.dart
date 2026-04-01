@@ -20,16 +20,16 @@ class _State extends State<EmployeeAttendanceHistoryScreen> {
   @override
   void initState() { super.initState(); _loadEmployees(); }
   Future<void> _loadEmployees() async {
-    final e = await ExtendedExtendedDatabaseHelper.instance.getAllEmployees(isActive: null);
+    final e = await ExtendedDatabaseHelper.instance.getAllEmployees(isActive: null);
     setState(() => _employees = e);
   }
 
   Future<void> _loadHistory() async {
     if (_selectedEmp == null) return;
     setState(() => _loading = true);
-    final history = await ExtendedExtendedDatabaseHelper.instance.getEmployeeAttendanceHistory(
+    final history = await ExtendedDatabaseHelper.instance.getEmployeeAttendanceHistory(
       employeeId: _selectedEmp!.id!, fromDate: _fromDate, toDate: _toDate);
-    final summary = await ExtendedExtendedDatabaseHelper.instance.getEmployeeAttendanceSummary(
+    final summary = await ExtendedDatabaseHelper.instance.getEmployeeAttendanceSummary(
       _selectedEmp!.id!, fromDate: _fromDate, toDate: _toDate);
     setState(() { _history = history; _summary = summary; _loading = false; });
   }
@@ -38,7 +38,11 @@ class _State extends State<EmployeeAttendanceHistoryScreen> {
     final d = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2020), lastDate: DateTime.now());
     if (d != null) {
       final s = d.toIso8601String().substring(0, 10);
-      setState(() { if (isFrom) _fromDate = s; else _toDate = s; });
+      setState(() { if (isFrom) {
+        _fromDate = s;
+      } else {
+        _toDate = s;
+      } });
     }
   }
 
@@ -52,7 +56,7 @@ class _State extends State<EmployeeAttendanceHistoryScreen> {
           padding: const EdgeInsets.all(12),
           child: Column(children: [
             DropdownButtonFormField<Employee>(
-              value: _selectedEmp, hint: const Text('Select Employee'), decoration: const InputDecoration(labelText: 'Employee', isDense: true),
+              initialValue: _selectedEmp, hint: const Text('Select Employee'), decoration: const InputDecoration(labelText: 'Employee', isDense: true),
               items: _employees.map((e) => DropdownMenuItem(value: e, child: Text('${e.fullName} (${e.employeeId})'))).toList(),
               onChanged: (v) => setState(() { _selectedEmp = v; _history = []; _summary = {}; }),
             ),

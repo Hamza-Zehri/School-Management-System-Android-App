@@ -18,7 +18,7 @@ class _State extends State<StudentProfileScreen> {
   void initState() { super.initState(); _load(); }
 
   Future<void> _load() async {
-    final s = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getStudentById(widget.studentId);
+    final s = await ExtendedDatabaseHelper.instance.getStudentById(widget.studentId);
     if (mounted) setState(() => _student = s);
   }
 
@@ -78,7 +78,7 @@ class _State extends State<StudentProfileScreen> {
   Future<void> _delete() async {
     final ok = await showConfirmDialog(context, title: 'Delete Student', message: 'This will permanently delete "${_student!.fullName}". All their records will remain.');
     if (ok) {
-      await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.deleteStudent(widget.studentId);
+      await ExtendedDatabaseHelper.instance.deleteStudent(widget.studentId);
       if (mounted) Navigator.pop(context);
     }
   }

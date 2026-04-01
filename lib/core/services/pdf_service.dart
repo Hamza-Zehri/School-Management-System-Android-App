@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
 import '../../models/models.dart';
 import '../../models/extended_models.dart';
@@ -11,15 +10,13 @@ class PdfService {
   PdfService._();
 
   Future<String> _getReportsDir() async {
-    final ext = await getExternalStorageDirectory();
-    final path = '${ext!.path}/SchoolManager/Reports';
+    const path = '/storage/emulated/0/Download/School\'s Files/Reports';
     await Directory(path).create(recursive: true);
     return path;
   }
 
   Future<String> _getReceiptsDir() async {
-    final ext = await getExternalStorageDirectory();
-    final path = '${ext!.path}/SchoolManager/Receipts';
+    const path = '/storage/emulated/0/Download/School\'s Files/Receipts';
     await Directory(path).create(recursive: true);
     return path;
   }

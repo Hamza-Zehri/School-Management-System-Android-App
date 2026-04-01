@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/db/extended_database_helper.dart';
 import '../../core/services/extended_providers.dart';
 import '../../core/services/employee_service.dart';
 import '../../models/extended_models.dart';
@@ -29,13 +28,13 @@ class _State extends ConsumerState<SalaryScreen> {
         child: Column(children: [
           Row(children: [
             Expanded(child: DropdownButtonFormField<int>(
-              value: _month, decoration: const InputDecoration(labelText: 'Month', isDense: true),
+              initialValue: _month, decoration: const InputDecoration(labelText: 'Month', isDense: true),
               items: List.generate(12, (i) => DropdownMenuItem(value: i+1, child: Text(_months[i+1]))),
               onChanged: (v) => setState(() => _month = v ?? _month),
             )),
             const SizedBox(width: 8),
             Expanded(child: DropdownButtonFormField<int>(
-              value: _year, decoration: const InputDecoration(labelText: 'Year', isDense: true),
+              initialValue: _year, decoration: const InputDecoration(labelText: 'Year', isDense: true),
               items: List.generate(5, (i) => DropdownMenuItem(value: DateTime.now().year - i, child: Text('${DateTime.now().year - i}'))),
               onChanged: (v) => setState(() => _year = v ?? _year),
             )),
@@ -134,7 +133,7 @@ class _SalaryCard extends StatelessWidget {
           TextField(controller: amtCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Pay Amount (Rs.)')),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
-            value: method, decoration: const InputDecoration(labelText: 'Method', isDense: true),
+            initialValue: method, decoration: const InputDecoration(labelText: 'Method', isDense: true),
             items: ['Cash','Bank Transfer','Cheque'].map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
             onChanged: (v) => ss(() => method = v ?? 'Cash'),
           ),

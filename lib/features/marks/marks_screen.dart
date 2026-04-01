@@ -17,7 +17,7 @@ class _State extends ConsumerState<MarksScreen> {
 
   @override
   void initState() { super.initState(); _loadClasses(); }
-  Future<void> _loadClasses() async { final c = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getAllClasses(); setState(() => _classes = c); }
+  Future<void> _loadClasses() async { final c = await ExtendedDatabaseHelper.instance.getAllClasses(); setState(() => _classes = c); }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class _State extends ConsumerState<MarksScreen> {
           padding: const EdgeInsets.all(12),
           child: Row(children: [
             Expanded(child: DropdownButtonFormField<int>(
-              value: _classId, hint: const Text('Select Class'), decoration: const InputDecoration(labelText: 'Class', isDense: true),
+              initialValue: _classId, hint: const Text('Select Class'), decoration: const InputDecoration(labelText: 'Class', isDense: true),
               items: _classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.className))).toList(),
               onChanged: (v) => setState(() { _classId = v; _examId = null; }),
             )),
@@ -74,7 +74,7 @@ class _State extends ConsumerState<MarksScreen> {
 
   Future<void> _addExam() async {
     if (_classId == null) { showSnack(context, 'Select a class first', isError: true); return; }
-    final sections = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getSectionsByClass(_classId!);
+    final sections = await ExtendedDatabaseHelper.instance.getSectionsByClass(_classId!);
     if (!mounted) return;
     final nameCtrl = TextEditingController();
     int? sectionId = sections.isNotEmpty ? sections.first.id : null;
@@ -86,7 +86,7 @@ class _State extends ConsumerState<MarksScreen> {
           TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Exam Name *', hintText: 'e.g. Mid Term 2024'), autofocus: true),
           const SizedBox(height: 12),
           DropdownButtonFormField<int>(
-            value: sectionId, decoration: const InputDecoration(labelText: 'Section'),
+            initialValue: sectionId, decoration: const InputDecoration(labelText: 'Section'),
             items: sections.map((s) => DropdownMenuItem(value: s.id, child: Text(s.sectionName))).toList(),
             onChanged: (v) => ss(() => sectionId = v),
           ),
@@ -98,7 +98,7 @@ class _State extends ConsumerState<MarksScreen> {
       )),
     );
     if (result == true && nameCtrl.text.trim().isNotEmpty && sectionId != null) {
-      await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.insertExam(Exam(examName: nameCtrl.text.trim(), classId: _classId!, sectionId: sectionId!));
+      await ExtendedDatabaseHelper.instance.insertExam(Exam(examName: nameCtrl.text.trim(), classId: _classId!, sectionId: sectionId!));
       ref.invalidate(examsProvider(_classId));
     }
   }
@@ -124,7 +124,7 @@ class _SubjState extends State<SubjectsScreen> {
   List<Subject> _subjects = [];
   @override
   void initState() { super.initState(); _load(); }
-  Future<void> _load() async { final s = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getSubjectsByClass(widget.classId); setState(() => _subjects = s); }
+  Future<void> _load() async { final s = await ExtendedDatabaseHelper.instance.getSubjectsByClass(widget.classId); setState(() => _subjects = s); }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -141,7 +141,7 @@ class _SubjState extends State<SubjectsScreen> {
               leading: const Icon(Icons.book_outlined, color: AppTheme.primary),
               title: Text(_subjects[i].subjectName),
               trailing: IconButton(icon: const Icon(Icons.delete_outline, color: AppTheme.danger), onPressed: () async {
-                await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.deleteStudent(_subjects[i].id!); _load();
+                await ExtendedDatabaseHelper.instance.deleteStudent(_subjects[i].id!); _load();
               }),
             ),
           ),
@@ -162,7 +162,7 @@ class _SubjState extends State<SubjectsScreen> {
       ),
     );
     if (ok == true && ctrl.text.trim().isNotEmpty) {
-      await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.insertSubject(Subject(subjectName: ctrl.text.trim(), classId: widget.classId));
+      await ExtendedDatabaseHelper.instance.insertSubject(Subject(subjectName: ctrl.text.trim(), classId: widget.classId));
       _load();
     }
   }
@@ -186,8 +186,8 @@ class _MEState extends State<MarksEntryScreen> {
   void initState() { super.initState(); _load(); }
 
   Future<void> _load() async {
-    final students = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getStudentsByClassSection(widget.exam.classId, widget.exam.sectionId, isActive: true);
-    final subjects = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getSubjectsByClass(widget.exam.classId);
+    final students = await ExtendedDatabaseHelper.instance.getStudentsByClassSection(widget.exam.classId, widget.exam.sectionId, isActive: true);
+    final subjects = await ExtendedDatabaseHelper.instance.getSubjectsByClass(widget.exam.classId);
     setState(() {
       _students = students; _subjects = subjects;
       if (subjects.isNotEmpty) _subject = subjects.first;
@@ -204,7 +204,7 @@ class _MEState extends State<MarksEntryScreen> {
       totalMarks: double.tryParse(_totalCtrl[s.id!]?.text ?? '0') ?? 0,
       obtainedMarks: double.tryParse(_obtainedCtrl[s.id!]?.text ?? '0') ?? 0,
     )).toList();
-    await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.saveMarksBatch(marks);
+    await ExtendedDatabaseHelper.instance.saveMarksBatch(marks);
     if (mounted) { showSnack(context, 'Marks saved'); setState(() => _saving = false); }
   }
 
@@ -215,7 +215,7 @@ class _MEState extends State<MarksEntryScreen> {
       Padding(
         padding: const EdgeInsets.all(12),
         child: DropdownButtonFormField<Subject>(
-          value: _subject, decoration: const InputDecoration(labelText: 'Subject'),
+          initialValue: _subject, decoration: const InputDecoration(labelText: 'Subject'),
           items: _subjects.map((s) => DropdownMenuItem(value: s, child: Text(s.subjectName))).toList(),
           onChanged: (v) => setState(() => _subject = v),
         ),

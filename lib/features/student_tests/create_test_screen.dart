@@ -31,22 +31,22 @@ class _State extends State<CreateTestScreen> {
   void initState() { super.initState(); _loadClasses(); }
 
   Future<void> _loadClasses() async {
-    final c = await ExtendedExtendedDatabaseHelper.instance.getAllClasses();
+    final c = await ExtendedDatabaseHelper.instance.getAllClasses();
     setState(() => _classes = c);
   }
 
   Future<void> _onClassChanged(int? v) async {
     setState(() { _classId = v; _sectionId = null; _subjectId = null; _sections = []; _subjects = []; _students = []; _studentsLoaded = false; });
     if (v != null) {
-      final s = await ExtendedExtendedDatabaseHelper.instance.getSectionsByClass(v);
-      final sub = await ExtendedExtendedDatabaseHelper.instance.getSubjectsByClass(v);
+      final s = await ExtendedDatabaseHelper.instance.getSectionsByClass(v);
+      final sub = await ExtendedDatabaseHelper.instance.getSubjectsByClass(v);
       setState(() { _sections = s; _subjects = sub; });
     }
   }
 
   Future<void> _loadStudents() async {
     if (_classId == null || _sectionId == null) { showSnack(context, 'Select class and section', isError: true); return; }
-    final students = await ExtendedExtendedDatabaseHelper.instance.getStudentsByClassSection(_classId!, _sectionId!, isActive: true);
+    final students = await ExtendedDatabaseHelper.instance.getStudentsByClassSection(_classId!, _sectionId!, isActive: true);
     // Init controllers
     _totalCtrl.clear(); _obtainedCtrl.clear(); _remarksCtrl.clear();
     for (final s in students) {
@@ -102,7 +102,9 @@ class _State extends State<CreateTestScreen> {
   @override
   void dispose() {
     _titleCtrl.dispose();
-    for (final c in [..._totalCtrl.values, ..._obtainedCtrl.values, ..._remarksCtrl.values]) c.dispose();
+    for (final c in [..._totalCtrl.values, ..._obtainedCtrl.values, ..._remarksCtrl.values]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -124,20 +126,20 @@ class _State extends State<CreateTestScreen> {
         const SizedBox(height: 16),
         const SectionHeader(title: 'Class & Subject'),
         DropdownButtonFormField<int>(
-          value: _classId, hint: const Text('Select Class'), decoration: const InputDecoration(labelText: 'Class'),
+          initialValue: _classId, hint: const Text('Select Class'), decoration: const InputDecoration(labelText: 'Class'),
           items: _classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.className))).toList(),
           onChanged: _onClassChanged,
         ),
         const SizedBox(height: 12),
         Row(children: [
           Expanded(child: DropdownButtonFormField<int>(
-            value: _sectionId, hint: const Text('Section'), decoration: const InputDecoration(labelText: 'Section'),
+            initialValue: _sectionId, hint: const Text('Section'), decoration: const InputDecoration(labelText: 'Section'),
             items: _sections.map((s) => DropdownMenuItem(value: s.id, child: Text(s.sectionName))).toList(),
             onChanged: (v) => setState(() { _sectionId = v; _students = []; _studentsLoaded = false; }),
           )),
           const SizedBox(width: 8),
           Expanded(child: DropdownButtonFormField<int>(
-            value: _subjectId, hint: const Text('Subject'), decoration: const InputDecoration(labelText: 'Subject'),
+            initialValue: _subjectId, hint: const Text('Subject'), decoration: const InputDecoration(labelText: 'Subject'),
             items: _subjects.map((s) => DropdownMenuItem(value: s.id, child: Text(s.subjectName))).toList(),
             onChanged: (v) => setState(() => _subjectId = v),
           )),
@@ -149,9 +151,9 @@ class _State extends State<CreateTestScreen> {
           const SizedBox(height: 16),
           SectionHeader(title: '${_students.length} Students — Enter Marks'),
           // Column headers
-          Padding(
-            padding: const EdgeInsets.only(bottom: 4),
-            child: Row(children: const [
+          const Padding(
+            padding: EdgeInsets.only(bottom: 4),
+            child: Row(children: [
               Expanded(flex: 3, child: Text('Student', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppTheme.textSecondary))),
               SizedBox(width: 4),
               SizedBox(width: 60, child: Text('Total', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppTheme.textSecondary), textAlign: TextAlign.center)),
@@ -185,7 +187,7 @@ class _State extends State<CreateTestScreen> {
             const SizedBox(width: 8),
             const Text('Send result SMS to guardians', style: TextStyle(fontSize: 13)),
             const Spacer(),
-            Switch(value: _sendSms, onChanged: (v) => setState(() => _sendSms = v), activeColor: AppTheme.primary),
+            Switch(value: _sendSms, onChanged: (v) => setState(() => _sendSms = v), activeThumbColor: AppTheme.primary),
           ]),
         ],
 

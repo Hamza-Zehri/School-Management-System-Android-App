@@ -489,7 +489,9 @@ class ExtendedDatabaseHelper {
       WHERE ${conditions.join(' AND ')} GROUP BY status
     ''', args);
     final map = <String, int>{};
-    for (final r in results) map[r['status'] as String] = r['cnt'] as int;
+    for (final r in results) {
+      map[r['status'] as String] = r['cnt'] as int;
+    }
     return map;
   }
 
@@ -497,7 +499,9 @@ class ExtendedDatabaseHelper {
     final db = await database;
     final results = await db.rawQuery('SELECT status, COUNT(*) as cnt FROM attendance WHERE attendance_date = ? GROUP BY status', [date]);
     final map = <String, int>{};
-    for (final r in results) map[r['status'] as String] = r['cnt'] as int;
+    for (final r in results) {
+      map[r['status'] as String] = r['cnt'] as int;
+    }
     return map;
   }
 
@@ -558,8 +562,8 @@ class ExtendedDatabaseHelper {
         c.class_name, sec.section_name
       FROM fee_records fr
       INNER JOIN students s ON fr.student_id = s.id
-      INNER JOIN classes c ON fr.class_id = c.id
-      INNER JOIN sections sec ON fr.section_id = sec.id
+      LEFT JOIN classes c ON fr.class_id = c.id
+      LEFT JOIN sections sec ON fr.section_id = sec.id
       $where
       ORDER BY c.sort_order, sec.section_name, s.full_name
     ''', args);
@@ -575,8 +579,8 @@ class ExtendedDatabaseHelper {
              c.class_name, sec.section_name
       FROM fee_records fr
       JOIN students s ON fr.student_id = s.id
-      JOIN classes c ON fr.class_id = c.id
-      JOIN sections sec ON fr.section_id = sec.id
+      LEFT JOIN classes c ON fr.class_id = c.id
+      LEFT JOIN sections sec ON fr.section_id = sec.id
       WHERE fr.student_id = ? AND fr.month = ? AND fr.year = ?
     ''', [studentId, month, year]);
     return maps.isEmpty ? null : FeeRecord.fromMap(maps.first);
@@ -589,8 +593,8 @@ class ExtendedDatabaseHelper {
              c.class_name, sec.section_name
       FROM fee_records fr
       JOIN students s ON fr.student_id = s.id
-      JOIN classes c ON fr.class_id = c.id
-      JOIN sections sec ON fr.section_id = sec.id
+      LEFT JOIN classes c ON fr.class_id = c.id
+      LEFT JOIN sections sec ON fr.section_id = sec.id
       WHERE fr.id = ?
     ''', [id]);
     return maps.isEmpty ? null : FeeRecord.fromMap(maps.first);
@@ -685,7 +689,9 @@ class ExtendedDatabaseHelper {
   Future<void> saveMarksBatch(List<Mark> marks) async {
     final db = await database;
     final batch = db.batch();
-    for (final m in marks) batch.insert('marks', m.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    for (final m in marks) {
+      batch.insert('marks', m.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    }
     await batch.commit(noResult: true);
   }
 
@@ -762,7 +768,9 @@ class ExtendedDatabaseHelper {
   Future<void> saveEmployeeAttendanceBatch(List<EmployeeAttendance> records) async {
     final db = await database;
     final batch = db.batch();
-    for (final a in records) batch.insert('employee_attendance', a.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    for (final a in records) {
+      batch.insert('employee_attendance', a.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    }
     await batch.commit(noResult: true);
   }
 
@@ -807,7 +815,9 @@ class ExtendedDatabaseHelper {
     final results = await db.rawQuery(
         'SELECT status, COUNT(*) as cnt FROM employee_attendance WHERE ${conditions.join(' AND ')} GROUP BY status', args);
     final map = <String, int>{};
-    for (final r in results) map[r['status'] as String] = r['cnt'] as int;
+    for (final r in results) {
+      map[r['status'] as String] = r['cnt'] as int;
+    }
     return map;
   }
 
@@ -920,7 +930,9 @@ class ExtendedDatabaseHelper {
   Future<void> saveTestMarksBatch(List<StudentTestMark> marks) async {
     final db = await database;
     final batch = db.batch();
-    for (final m in marks) batch.insert('student_test_marks', m.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    for (final m in marks) {
+      batch.insert('student_test_marks', m.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    }
     await batch.commit(noResult: true);
   }
 

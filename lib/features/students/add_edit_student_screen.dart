@@ -4,7 +4,6 @@ import '../../core/db/extended_database_helper.dart';
 import '../../models/models.dart';
 import '../../shared/theme/app_theme.dart';
 import '../../shared/widgets/shared_widgets.dart';
-import '../../core/services/sms_service.dart';
 
 class AddEditStudentScreen extends ConsumerStatefulWidget {
   final Student? student;
@@ -44,10 +43,10 @@ class _State extends ConsumerState<AddEditStudentScreen> {
   }
 
   Future<void> _loadClasses() async {
-    final c = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getAllClasses();
+    final c = await ExtendedDatabaseHelper.instance.getAllClasses();
     setState(() => _classes = c);
     if (_cid != null) {
-      final s = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getSectionsByClass(_cid!);
+      final s = await ExtendedDatabaseHelper.instance.getSectionsByClass(_cid!);
       setState(() => _sections = s);
     }
   }
@@ -55,7 +54,7 @@ class _State extends ConsumerState<AddEditStudentScreen> {
   Future<void> _onClassChanged(int? v) async {
     setState(() { _cid = v; _sid = null; _sections = []; });
     if (v != null) {
-      final s = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getSectionsByClass(v);
+      final s = await ExtendedDatabaseHelper.instance.getSectionsByClass(v);
       setState(() => _sections = s);
     }
   }
@@ -73,15 +72,17 @@ class _State extends ConsumerState<AddEditStudentScreen> {
       address: _addr.text.trim().isEmpty ? null : _addr.text.trim(), isActive: _active,
     );
     try {
-      if (widget.student == null) { await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.insertStudent(s); if (mounted) showSnack(context, 'Student added'); }
-      else { await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.updateStudent(s); if (mounted) showSnack(context, 'Student updated'); }
+      if (widget.student == null) { await ExtendedDatabaseHelper.instance.insertStudent(s); if (mounted) showSnack(context, 'Student added'); }
+      else { await ExtendedDatabaseHelper.instance.updateStudent(s); if (mounted) showSnack(context, 'Student updated'); }
       if (mounted) Navigator.pop(context);
     } catch (e) { if (mounted) showSnack(context, 'Error: $e', isError: true); }
     setState(() => _saving = false);
   }
 
   @override
-  void dispose() { for (final c in [_r,_rn,_n,_fn,_gn,_ph,_ph2,_addr,_dob]) c.dispose(); super.dispose(); }
+  void dispose() { for (final c in [_r,_rn,_n,_fn,_gn,_ph,_ph2,_addr,_dob]) {
+    c.dispose();
+  } super.dispose(); }
 
   @override
   Widget build(BuildContext context) {
@@ -100,21 +101,21 @@ class _State extends ConsumerState<AddEditStudentScreen> {
           _g(), _tf('Guardian Phone 2', _ph2, hint: '03XXXXXXXXX', kb: TextInputType.phone),
           _g(), _sec('Class & Section'),
           DropdownButtonFormField<int>(
-            value: _cid, hint: const Text('Select Class'), decoration: const InputDecoration(labelText: 'Class'),
+            initialValue: _cid, hint: const Text('Select Class'), decoration: const InputDecoration(labelText: 'Class'),
             validator: (v) => v == null ? 'Select class' : null,
             items: _classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.className))).toList(),
             onChanged: _onClassChanged,
           ),
           _g(),
           DropdownButtonFormField<int>(
-            value: _sid, hint: const Text('Select Section'), decoration: const InputDecoration(labelText: 'Section'),
+            initialValue: _sid, hint: const Text('Select Section'), decoration: const InputDecoration(labelText: 'Section'),
             validator: (v) => v == null ? 'Select section' : null,
             items: _sections.map((s) => DropdownMenuItem(value: s.id, child: Text(s.sectionName))).toList(),
             onChanged: (v) => setState(() => _sid = v),
           ),
           _g(), _sec('Personal Details'),
           DropdownButtonFormField<String>(
-            value: _gender, decoration: const InputDecoration(labelText: 'Gender'),
+            initialValue: _gender, decoration: const InputDecoration(labelText: 'Gender'),
             items: ['Male','Female','Other'].map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
             onChanged: (v) => setState(() => _gender = v ?? 'Male'),
           ),
@@ -129,7 +130,7 @@ class _State extends ConsumerState<AddEditStudentScreen> {
           _g(), _tf('Address', _addr, maxLines: 2),
           if (widget.student != null) ...[
             _g(), _sec('Status'),
-            SwitchListTile(title: const Text('Active Student'), value: _active, onChanged: (v) => setState(() => _active = v), activeColor: AppTheme.primary),
+            SwitchListTile(title: const Text('Active Student'), value: _active, onChanged: (v) => setState(() => _active = v), activeThumbColor: AppTheme.primary),
           ],
           const SizedBox(height: 16),
           SizedBox(width: double.infinity, height: 52,

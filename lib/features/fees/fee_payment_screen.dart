@@ -95,7 +95,7 @@ class _State extends State<FeePaymentScreen> {
                   decoration: InputDecoration(labelText: 'Amount (Rs.)', hintText: 'Max: ${r.dueAmount.toStringAsFixed(0)}')),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  value: _paymentMethod,
+                  initialValue: _paymentMethod,
                   decoration: const InputDecoration(labelText: 'Payment Method'),
                   items: ['Cash', 'Bank Transfer', 'Cheque', 'Online']
                       .map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
@@ -105,7 +105,7 @@ class _State extends State<FeePaymentScreen> {
                 Row(children: [
                   const Text('Send Confirmation SMS', style: TextStyle(fontSize: 13)),
                   const Spacer(),
-                  Switch(value: _sendSms, onChanged: (v) => setState(() => _sendSms = v), activeColor: AppTheme.primary),
+                  Switch(value: _sendSms, onChanged: (v) => setState(() => _sendSms = v), activeThumbColor: AppTheme.primary),
                 ]),
                 const SizedBox(height: 8),
                 SizedBox(width: double.infinity, height: 46,

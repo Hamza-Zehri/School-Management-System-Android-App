@@ -23,14 +23,14 @@ class _State extends ConsumerState<TestHistoryScreen> {
   @override
   void initState() { super.initState(); _loadClasses(); }
   Future<void> _loadClasses() async {
-    final c = await ExtendedExtendedDatabaseHelper.instance.getAllClasses();
+    final c = await ExtendedDatabaseHelper.instance.getAllClasses();
     setState(() => _classes = c);
   }
   Future<void> _onClassChanged(int? v) async {
     setState(() { _classId = v; _sectionId = null; _subjectId = null; _sections = []; _subjects = []; });
     if (v != null) {
-      final s = await ExtendedExtendedDatabaseHelper.instance.getSectionsByClass(v);
-      final sub = await ExtendedExtendedDatabaseHelper.instance.getSubjectsByClass(v);
+      final s = await ExtendedDatabaseHelper.instance.getSectionsByClass(v);
+      final sub = await ExtendedDatabaseHelper.instance.getSubjectsByClass(v);
       setState(() { _sections = s; _subjects = sub; });
     }
   }
@@ -52,11 +52,11 @@ class _State extends ConsumerState<TestHistoryScreen> {
       ),
       body: Column(children: [
         Container(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           padding: const EdgeInsets.all(12),
           child: Column(children: [
             DropdownButtonFormField<int>(
-              value: _classId, hint: const Text('All Classes'), decoration: const InputDecoration(labelText: 'Class', isDense: true),
+              initialValue: _classId, hint: const Text('All Classes'), decoration: const InputDecoration(labelText: 'Class', isDense: true),
               items: [const DropdownMenuItem(value: null, child: Text('All Classes')), ..._classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.className)))],
               onChanged: _onClassChanged,
             ),
@@ -64,13 +64,13 @@ class _State extends ConsumerState<TestHistoryScreen> {
               const SizedBox(height: 8),
               Row(children: [
                 Expanded(child: DropdownButtonFormField<int>(
-                  value: _sectionId, hint: const Text('All Sections'), decoration: const InputDecoration(labelText: 'Section', isDense: true),
+                  initialValue: _sectionId, hint: const Text('All Sections'), decoration: const InputDecoration(labelText: 'Section', isDense: true),
                   items: [const DropdownMenuItem(value: null, child: Text('All')), ..._sections.map((s) => DropdownMenuItem(value: s.id, child: Text(s.sectionName)))],
                   onChanged: (v) => setState(() => _sectionId = v),
                 )),
                 const SizedBox(width: 8),
                 Expanded(child: DropdownButtonFormField<int>(
-                  value: _subjectId, hint: const Text('All Subjects'), decoration: const InputDecoration(labelText: 'Subject', isDense: true),
+                  initialValue: _subjectId, hint: const Text('All Subjects'), decoration: const InputDecoration(labelText: 'Subject', isDense: true),
                   items: [const DropdownMenuItem(value: null, child: Text('All')), ..._subjects.map((s) => DropdownMenuItem(value: s.id, child: Text(s.subjectName)))],
                   onChanged: (v) => setState(() => _subjectId = v),
                 )),

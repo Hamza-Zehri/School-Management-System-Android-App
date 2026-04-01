@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/extended_database_helper.dart';
-import '../../core/services/extended_providers.dart';
+import '../../core/services/providers.dart';
 import '../../shared/theme/app_theme.dart';
 import '../../shared/widgets/shared_widgets.dart';
 import '../students/students_screen.dart';
@@ -20,7 +20,7 @@ import '../attendance_history/student_attendance_history_screen.dart';
 
 // Inline dashboard stats provider using ExtendedDatabaseHelper
 final extDashboardStatsProvider = FutureProvider<ExtDashboardStats>((ref) async {
-  final db = ExtendedExtendedDatabaseHelper.instance;
+  final db = ExtendedDatabaseHelper.instance;
   final today = DateTime.now().toIso8601String().substring(0, 10);
   final now = DateTime.now();
 
@@ -64,6 +64,11 @@ class DashboardScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('School Manager'),
         actions: [
+          IconButton(
+            icon: Icon(ref.watch(themeModeProvider) == ThemeMode.dark ? Icons.light_mode_outlined : Icons.dark_mode_outlined),
+            onPressed: () => ref.read(themeModeProvider.notifier).state = ref.read(themeModeProvider) == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark,
+            tooltip: 'Toggle Theme',
+          ),
           IconButton(icon: const Icon(Icons.settings_outlined), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()))),
         ],
       ),
@@ -82,7 +87,17 @@ class DashboardScreen extends ConsumerWidget {
             ]),
           ),
           const SizedBox(height: 20),
-          const SectionHeader(title: 'Students Overview'),
+          const SectionHeader(title: 'Preference'),
+          Card(
+            child: SwitchListTile(
+              secondary: Icon(ref.watch(themeModeProvider) == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode, color: AppTheme.primary),
+              title: const Text('Dark Mode', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+              value: ref.watch(themeModeProvider) == ThemeMode.dark,
+              onChanged: (v) => ref.read(themeModeProvider.notifier).state = v ? ThemeMode.dark : ThemeMode.light,
+            ),
+          ),
+          const SizedBox(height: 16),
+          const SectionHeader(title: 'Management'),
           statsAsync.when(
             loading: () => const Center(child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator())),
             error: (e, _) => Text('Error: $e'),
@@ -152,7 +167,10 @@ class _QuickActionsGrid extends StatelessWidget {
         return GestureDetector(
           onTap: () => Navigator.push(ctx, MaterialPageRoute(builder: (_) => a.screen)),
           child: Container(
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.border)),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppTheme.border)),
             child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Container(width: 44, height: 44, decoration: BoxDecoration(color: a.color.withOpacity(0.12), borderRadius: BorderRadius.circular(10)), child: Icon(a.icon, color: a.color, size: 24)),
               const SizedBox(height: 6),

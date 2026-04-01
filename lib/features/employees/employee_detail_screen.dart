@@ -16,7 +16,7 @@ class _State extends State<EmployeeDetailScreen> {
   @override
   void initState() { super.initState(); _load(); }
   Future<void> _load() async {
-    final e = await ExtendedExtendedDatabaseHelper.instance.getEmployeeById(widget.employeeId);
+    final e = await ExtendedDatabaseHelper.instance.getEmployeeById(widget.employeeId);
     if (mounted) setState(() => _emp = e);
   }
 
@@ -73,7 +73,7 @@ class _State extends State<EmployeeDetailScreen> {
   Future<void> _delete() async {
     final ok = await showConfirmDialog(context, title: 'Delete Employee', message: 'Delete "${_emp!.fullName}"? Salary and attendance records will remain.');
     if (ok) {
-      await ExtendedExtendedDatabaseHelper.instance.deleteEmployee(widget.employeeId);
+      await ExtendedDatabaseHelper.instance.deleteEmployee(widget.employeeId);
       if (mounted) Navigator.pop(context);
     }
   }

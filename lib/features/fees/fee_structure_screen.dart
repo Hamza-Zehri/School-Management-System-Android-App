@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/extended_database_helper.dart';
 import '../../core/services/providers.dart';
 import '../../models/models.dart';
-import '../../shared/theme/app_theme.dart';
 import '../../shared/widgets/shared_widgets.dart';
 
 class FeeStructureScreen extends ConsumerWidget {
@@ -44,7 +43,7 @@ class _State extends State<_FeeStructureCard> {
   void initState() { super.initState(); _load(); }
 
   Future<void> _load() async {
-    final fs = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getFeeStructureByClass(widget.cls.id!);
+    final fs = await ExtendedDatabaseHelper.instance.getFeeStructureByClass(widget.cls.id!);
     setState(() {
       _fs = fs;
       _mCtrl.text = fs?.monthlyFee.toStringAsFixed(0) ?? '0';
@@ -62,7 +61,7 @@ class _State extends State<_FeeStructureCard> {
       transportFee: double.tryParse(_tCtrl.text) ?? 0,
       otherFee: double.tryParse(_oCtrl.text) ?? 0,
     );
-    await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.saveFeeStructure(fs);
+    await ExtendedDatabaseHelper.instance.saveFeeStructure(fs);
     if (mounted) showSnack(context, '${widget.cls.className} fee structure saved');
     _load();
   }

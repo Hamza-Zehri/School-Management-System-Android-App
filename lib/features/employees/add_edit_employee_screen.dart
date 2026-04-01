@@ -71,10 +71,10 @@ class _State extends ConsumerState<AddEditEmployeeScreen> {
     );
     try {
       if (widget.employee == null) {
-        await ExtendedExtendedDatabaseHelper.instance.insertEmployee(emp);
+        await ExtendedDatabaseHelper.instance.insertEmployee(emp);
         if (mounted) showSnack(context, 'Employee added');
       } else {
-        await ExtendedExtendedDatabaseHelper.instance.updateEmployee(emp);
+        await ExtendedDatabaseHelper.instance.updateEmployee(emp);
         if (mounted) showSnack(context, 'Employee updated');
       }
       ref.invalidate(employeesProvider);
@@ -87,7 +87,9 @@ class _State extends ConsumerState<AddEditEmployeeScreen> {
 
   @override
   void dispose() {
-    for (final c in [_empIdCtrl,_nameCtrl,_fatherCtrl,_phoneCtrl,_cnicCtrl,_salaryCtrl,_addressCtrl,_joiningCtrl]) c.dispose();
+    for (final c in [_empIdCtrl,_nameCtrl,_fatherCtrl,_phoneCtrl,_cnicCtrl,_salaryCtrl,_addressCtrl,_joiningCtrl]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -107,7 +109,7 @@ class _State extends ConsumerState<AddEditEmployeeScreen> {
           _g(), _tf('CNIC', _cnicCtrl, hint: '3XXXX-XXXXXXX-X', kb: TextInputType.number),
           _g(), _sec('Job Details'),
           DropdownButtonFormField<String>(
-            value: _designation, decoration: const InputDecoration(labelText: 'Designation *'),
+            initialValue: _designation, decoration: const InputDecoration(labelText: 'Designation *'),
             items: _designations.map((d) => DropdownMenuItem(value: d, child: Text(d))).toList(),
             onChanged: (v) => setState(() => _designation = v ?? 'Teacher'),
           ),
@@ -123,7 +125,7 @@ class _State extends ConsumerState<AddEditEmployeeScreen> {
           _g(), _tf('Address', _addressCtrl, maxLines: 2),
           if (widget.employee != null) ...[
             _g(), _sec('Status'),
-            SwitchListTile(title: const Text('Active Employee'), value: _active, onChanged: (v) => setState(() => _active = v), activeColor: AppTheme.primary),
+            SwitchListTile(title: const Text('Active Employee'), value: _active, onChanged: (v) => setState(() => _active = v), activeThumbColor: AppTheme.primary),
           ],
           const SizedBox(height: 16),
           SizedBox(width: double.infinity, height: 52,

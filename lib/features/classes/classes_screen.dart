@@ -87,9 +87,9 @@ class ClassesScreen extends ConsumerWidget {
         sortOrder: existing?.sortOrder ?? 0,
       );
       if (existing == null) {
-        await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.insertClass(cls);
+        await ExtendedDatabaseHelper.instance.insertClass(cls);
       } else {
-        await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.updateClass(cls);
+        await ExtendedDatabaseHelper.instance.updateClass(cls);
       }
       ref.invalidate(classesProvider);
     }
@@ -184,7 +184,7 @@ class _ClassCard extends ConsumerWidget {
       ),
     );
     if (result == true && ctrl.text.trim().isNotEmpty) {
-      await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.updateClass(
+      await ExtendedDatabaseHelper.instance.updateClass(
           SchoolClass(id: cls.id, className: ctrl.text.trim()));
       ref.invalidate(classesProvider);
     }
@@ -198,7 +198,7 @@ class _ClassCard extends ConsumerWidget {
           'Delete "${cls.className}"? This will also delete its sections. Students will not be deleted.',
     );
     if (confirmed) {
-      await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.deleteClass(cls.id!);
+      await ExtendedDatabaseHelper.instance.deleteClass(cls.id!);
       ref.invalidate(classesProvider);
     }
   }
@@ -289,7 +289,7 @@ class _SectionsList extends ConsumerWidget {
       ),
     );
     if (result == true && ctrl.text.trim().isNotEmpty) {
-      await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.insertSection(
+      await ExtendedDatabaseHelper.instance.insertSection(
           Section(classId: classId, sectionName: ctrl.text.trim().toUpperCase()));
       ref.invalidate(sectionsByClassProvider(classId));
     }
@@ -303,7 +303,7 @@ class _SectionsList extends ConsumerWidget {
       message: 'Delete section "${s.sectionName}"?',
     );
     if (confirmed) {
-      await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.deleteSection(s.id!);
+      await ExtendedDatabaseHelper.instance.deleteSection(s.id!);
       ref.invalidate(sectionsByClassProvider(classId));
     }
   }

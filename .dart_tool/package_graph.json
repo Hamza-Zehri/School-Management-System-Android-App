@@ -5,13 +5,12 @@
   "packages": [
     {
       "name": "school_manager",
-      "version": "1.0.0+2",
+      "version": "2.0.0+2",
       "dependencies": [
         "collection",
         "cupertino_icons",
         "excel",
         "file_picker",
-        "fl_chart",
         "flutter",
         "flutter_animate",
         "flutter_localizations",
@@ -26,7 +25,6 @@
         "printing",
         "share_plus",
         "sqflite",
-        "telephony",
         "uuid"
       ],
       "devDependencies": [
@@ -95,14 +93,6 @@
       ]
     },
     {
-      "name": "fl_chart",
-      "version": "0.68.0",
-      "dependencies": [
-        "equatable",
-        "flutter"
-      ]
-    },
-    {
       "name": "google_fonts",
       "version": "6.3.3",
       "dependencies": [
@@ -133,14 +123,6 @@
         "clock",
         "meta",
         "path"
-      ]
-    },
-    {
-      "name": "telephony",
-      "version": "0.2.0",
-      "dependencies": [
-        "flutter",
-        "platform"
       ]
     },
     {
@@ -452,14 +434,6 @@
       ]
     },
     {
-      "name": "equatable",
-      "version": "2.0.8",
-      "dependencies": [
-        "collection",
-        "meta"
-      ]
-    },
-    {
       "name": "http",
       "version": "1.6.0",
       "dependencies": [
@@ -468,11 +442,6 @@
         "meta",
         "web"
       ]
-    },
-    {
-      "name": "platform",
-      "version": "3.1.6",
-      "dependencies": []
     },
     {
       "name": "web",
@@ -551,6 +520,14 @@
       "dependencies": [
         "crypto",
         "path"
+      ]
+    },
+    {
+      "name": "equatable",
+      "version": "2.0.8",
+      "dependencies": [
+        "collection",
+        "meta"
       ]
     },
     {
@@ -926,6 +903,11 @@
       "dependencies": [
         "meta"
       ]
+    },
+    {
+      "name": "platform",
+      "version": "3.1.6",
+      "dependencies": []
     },
     {
       "name": "xdg_directories",

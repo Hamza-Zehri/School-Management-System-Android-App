@@ -37,24 +37,26 @@ class _State extends ConsumerState<FeesScreen> {
           PopupMenuButton(itemBuilder: (_) => [
             const PopupMenuItem(value: 'generate', child: Text('Generate Fee Records')),
             const PopupMenuItem(value: 'pdf', child: Text('Export PDF Report')),
-          ], onSelected: (v) { if (v == 'generate') _generateFees(); else if (v == 'pdf') _exportPdf(recordsAsync.valueOrNull ?? []); }),
+          ], onSelected: (v) { if (v == 'generate') {
+            _generateFees();
+          } else if (v == 'pdf') _exportPdf(recordsAsync.valueOrNull ?? []); }),
         ],
       ),
       body: Column(children: [
         // Filters
         Container(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
           child: Column(children: [
             Row(children: [
               Expanded(child: DropdownButtonFormField<int>(
-                value: _month, decoration: const InputDecoration(labelText: 'Month', isDense: true),
+                initialValue: _month, decoration: const InputDecoration(labelText: 'Month', isDense: true),
                 items: List.generate(12, (i) => DropdownMenuItem(value: i+1, child: Text(_months[i+1]))),
                 onChanged: (v) => setState(() => _month = v ?? _month),
               )),
               const SizedBox(width: 8),
               Expanded(child: DropdownButtonFormField<int>(
-                value: _year, decoration: const InputDecoration(labelText: 'Year', isDense: true),
+                initialValue: _year, decoration: const InputDecoration(labelText: 'Year', isDense: true),
                 items: List.generate(5, (i) => DropdownMenuItem(value: DateTime.now().year - i, child: Text('${DateTime.now().year - i}'))),
                 onChanged: (v) => setState(() => _year = v ?? _year),
               )),
@@ -129,7 +131,7 @@ class _State extends ConsumerState<FeesScreen> {
   }
 
   Future<void> _exportPdf(List<FeeRecord> records) async {
-    final school = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getSchoolSettings();
+    final school = await ExtendedDatabaseHelper.instance.getSchoolSettings();
     if (school == null || !mounted) return;
     final path = await PdfService.instance.generateFeeStatusReport(records: records, status: _status, month: _month, year: _year, school: school);
     if (mounted) showSnack(context, 'PDF saved: $path');

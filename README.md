@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/images/logo.PNG" alt="School Manager Logo" width="400" />
+</p>
+
 # School Manager — Offline Flutter Android App
 
 A complete, 100% offline School Management System for Android, built with Flutter + SQLite.
@@ -17,8 +21,11 @@ A complete, 100% offline School Management System for Android, built with Flutte
 | Fee Management | Monthly fee records, paid/unpaid/partial/overdue |
 | Fee Payments | Multiple payments per record, receipt PDF |
 | Marks & Exams | Per-exam marks entry by subject |
-| SMS Center | Send to class/section/all, editable templates |
-| PDF Reports | Fee receipts, student lists, attendance reports |
+| Daily Tests | Create/track daily classroom tests and scores |
+| Employee Management | Salary tracking, attendance, profile storage |
+| SMS Center | Direct SIM SMS, editable templates, automated alerts |
+| Dark Mode | Premium dark theme support with dashboard toggle |
+| Centralized Files | All exports organized in "School's Files" Downloads folder |
 | Backup & Restore | Full JSON export/import, survives reinstall |
 
 ---
@@ -148,9 +155,11 @@ flutter build apk --release
 
 | Type | Path |
 |---|---|
-| Fee Receipts | `Downloads/SchoolManager/Receipts/` |
-| Reports | `Downloads/SchoolManager/Reports/` |
-| Backups | `Downloads/SchoolManager/Backups/` |
+| Central Folder | `Downloads/School's Files/` |
+| Fee Receipts | `Downloads/School's Files/Receipts/` |
+| Reports | `Downloads/School's Files/Reports/` |
+| Backups | `Downloads/School's Files/Backups/` |
+| Templates | `Downloads/School's Files/Templates/` |
 
 ---
 
@@ -188,5 +197,9 @@ App Install
 ```
 
 ---
+
+---
+
+Developed by **Engr. Hamza Asad**.
 
 *Made for offline private school management. No internet required. No backend. No cloud.*

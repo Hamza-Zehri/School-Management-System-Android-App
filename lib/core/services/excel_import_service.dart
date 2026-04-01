@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:excel/excel.dart';
-import 'package:path_provider/path_provider.dart';
 import '../db/extended_database_helper.dart';
 import '../../models/models.dart';
 
@@ -24,7 +23,7 @@ class ExcelImportService {
   static final ExcelImportService instance = ExcelImportService._();
   ExcelImportService._();
 
-  final ExtendedDatabaseHelper _db = ExtendedExtendedExtendedExtendedDatabaseHelper.instance;
+  final ExtendedDatabaseHelper _db = ExtendedDatabaseHelper.instance;
 
   /// Required columns in the Excel template
   static const List<String> requiredColumns = [
@@ -100,7 +99,7 @@ class ExcelImportService {
       for (int row = 1; row < sheet.maxRows; row++) {
         try {
           final rowData = sheet.row(row);
-          final get = (String col) =>
+          String get(String col) =>
               columnMap[col] != null
                   ? rowData[columnMap[col]!]?.value?.toString().trim() ?? ''
                   : '';
@@ -203,8 +202,7 @@ class ExcelImportService {
     }
 
     // Save to Downloads
-    final dir = await getExternalStorageDirectory();
-    final savePath = '${dir!.path}/SchoolManager/student_import_template.xlsx';
+    const savePath = '/storage/emulated/0/Download/School\'s Files/Templates/student_import_template.xlsx';
     await File(savePath).parent.create(recursive: true);
     final fileBytes = excel.save();
     if (fileBytes != null) {

@@ -24,22 +24,22 @@ class _State extends ConsumerState<AttendanceScreen> {
   void initState() { super.initState(); _loadClasses(); }
 
   Future<void> _loadClasses() async {
-    final c = await ExtendedExtendedExtendedDatabaseHelper.instance.getAllClasses();
+    final c = await ExtendedDatabaseHelper.instance.getAllClasses();
     setState(() => _classes = c);
   }
 
   Future<void> _onClassChanged(int? v) async {
     setState(() { _classId = v; _sectionId = null; _sections = []; _students = []; _statusMap = {}; });
     if (v != null) {
-      final s = await ExtendedExtendedExtendedDatabaseHelper.instance.getSectionsByClass(v);
+      final s = await ExtendedDatabaseHelper.instance.getSectionsByClass(v);
       setState(() => _sections = s);
     }
   }
 
   Future<void> _loadStudents() async {
     if (_classId == null || _sectionId == null) return;
-    final students = await ExtendedExtendedExtendedDatabaseHelper.instance.getStudentsByClassSection(_classId!, _sectionId!, isActive: true);
-    final existing = await ExtendedExtendedExtendedDatabaseHelper.instance.getAttendanceByClassSectionDate(_classId!, _sectionId!, _date);
+    final students = await ExtendedDatabaseHelper.instance.getStudentsByClassSection(_classId!, _sectionId!, isActive: true);
+    final existing = await ExtendedDatabaseHelper.instance.getAttendanceByClassSectionDate(_classId!, _sectionId!, _date);
     final existingMap = {for (final a in existing) a.studentId: a.status};
     final statusMap = <int, String>{};
     for (final s in students) {
@@ -52,7 +52,7 @@ class _State extends ConsumerState<AttendanceScreen> {
     if (_students.isEmpty) { showSnack(context, 'Load students first', isError: true); return; }
     setState(() => _saving = true);
     final records = _students.map((s) => Attendance(studentId: s.id!, attendanceDate: _date, status: _statusMap[s.id!] ?? 'present')).toList();
-    await ExtendedExtendedExtendedDatabaseHelper.instance.saveAttendanceBatch(records);
+    await ExtendedDatabaseHelper.instance.saveAttendanceBatch(records);
     if (_sendSms) {
       final absentRecords = records.where((r) => r.status == 'absent').toList();
       // Enrich with student details
@@ -85,13 +85,13 @@ class _State extends ConsumerState<AttendanceScreen> {
           child: Column(children: [
             Row(children: [
               Expanded(child: DropdownButtonFormField<int>(
-                value: _classId, hint: const Text('Class'), decoration: const InputDecoration(labelText: 'Class', isDense: true),
+                initialValue: _classId, hint: const Text('Class'), decoration: const InputDecoration(labelText: 'Class', isDense: true),
                 items: _classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.className))).toList(),
                 onChanged: _onClassChanged,
               )),
               const SizedBox(width: 8),
               Expanded(child: DropdownButtonFormField<int>(
-                value: _sectionId, hint: const Text('Section'), decoration: const InputDecoration(labelText: 'Section', isDense: true),
+                initialValue: _sectionId, hint: const Text('Section'), decoration: const InputDecoration(labelText: 'Section', isDense: true),
                 items: _sections.map((s) => DropdownMenuItem(value: s.id, child: Text(s.sectionName))).toList(),
                 onChanged: (v) { setState(() { _sectionId = v; _students = []; }); },
               )),
@@ -163,7 +163,7 @@ class _State extends ConsumerState<AttendanceScreen> {
                 const SizedBox(width: 8),
                 const Text('Send absent SMS to guardians', style: TextStyle(fontSize: 13)),
                 const Spacer(),
-                Switch(value: _sendSms, onChanged: (v) => setState(() => _sendSms = v), activeColor: AppTheme.primary),
+                Switch(value: _sendSms, onChanged: (v) => setState(() => _sendSms = v), activeThumbColor: AppTheme.primary),
               ]),
               const SizedBox(height: 8),
               SizedBox(width: double.infinity, height: 48,
@@ -179,7 +179,9 @@ class _State extends ConsumerState<AttendanceScreen> {
   }
 
   Widget _quickBtn(String label, String status, Color color) => OutlinedButton(
-    onPressed: () => setState(() { for (final s in _students) _statusMap[s.id!] = status; }),
+    onPressed: () => setState(() { for (final s in _students) {
+      _statusMap[s.id!] = status;
+    } }),
     style: OutlinedButton.styleFrom(foregroundColor: color, side: BorderSide(color: color), padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
     child: Text(label, style: const TextStyle(fontSize: 11)),
   );
@@ -195,8 +197,8 @@ class _State extends ConsumerState<AttendanceScreen> {
       selected: {status},
       onSelectionChanged: (s) => setState(() => _statusMap[studentId] = s.first),
       style: ButtonStyle(
-        textStyle: MaterialStateProperty.all(const TextStyle(fontSize: 10)),
-        minimumSize: MaterialStateProperty.all(const Size(28, 28)),
+        textStyle: WidgetStateProperty.all(const TextStyle(fontSize: 10)),
+        minimumSize: WidgetStateProperty.all(const Size(28, 28)),
       ),
     );
   }

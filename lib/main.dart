@@ -2,24 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'shared/theme/app_theme.dart';
 import 'core/db/extended_database_helper.dart';
+import 'core/services/providers.dart';
 import 'features/setup/first_launch_screen.dart';
 import 'features/dashboard/dashboard_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Pre-initialize the extended DB (runs migrations automatically)
-  await ExtendedExtendedDatabaseHelper.instance.database;
+  await ExtendedDatabaseHelper.instance.database;
   runApp(const ProviderScope(child: SchoolManagerApp()));
 }
 
-class SchoolManagerApp extends StatelessWidget {
+class SchoolManagerApp extends ConsumerWidget {
   const SchoolManagerApp({super.key});
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
     return MaterialApp(
       title: 'School Manager',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
       home: const _AppRouter(),
     );
   }
@@ -38,7 +42,7 @@ class _AppRouterState extends State<_AppRouter> {
   void initState() { super.initState(); _check(); }
 
   Future<void> _check() async {
-    final settings = await ExtendedExtendedDatabaseHelper.instance.getSchoolSettings();
+    final settings = await ExtendedDatabaseHelper.instance.getSchoolSettings();
     setState(() { _hasSchool = settings != null; _loading = false; });
   }
 

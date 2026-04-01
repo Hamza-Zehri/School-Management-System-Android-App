@@ -7,7 +7,7 @@ class StudentTestService {
   static final StudentTestService instance = StudentTestService._();
   StudentTestService._();
 
-  final ExtendedDatabaseHelper _db = ExtendedExtendedDatabaseHelper.instance;
+  final ExtendedDatabaseHelper _db = ExtendedDatabaseHelper.instance;
 
   /// Save a complete test with all marks in one transaction.
   /// Returns {testId, smsSent, smsFailed}
@@ -57,7 +57,11 @@ class StudentTestService {
             studentId: mark.studentId,
             purpose: 'test_result',
           );
-          if (ok) smsSent++; else smsFailed++;
+          if (ok) {
+            smsSent++;
+          } else {
+            smsFailed++;
+          }
           await Future.delayed(const Duration(milliseconds: 150));
         }
       }

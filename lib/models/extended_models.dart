@@ -88,7 +88,7 @@ class Employee {
         salary: salary ?? this.salary,
         address: address ?? this.address,
         isActive: isActive ?? this.isActive,
-        createdAt: this.createdAt,
+        createdAt: createdAt,
       );
 }
 

@@ -38,7 +38,9 @@ class _State extends State<SchoolSetupScreen> {
 
   @override
   void dispose() {
-    for (final c in [_nameCtrl, _addressCtrl, _phoneCtrl, _emailCtrl]) c.dispose();
+    for (final c in [_nameCtrl, _addressCtrl, _phoneCtrl, _emailCtrl]) {
+      c.dispose();
+    }
     super.dispose();
   }
 

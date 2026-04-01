@@ -7,7 +7,7 @@ class EmployeeService {
   static final EmployeeService instance = EmployeeService._();
   EmployeeService._();
 
-  final ExtendedDatabaseHelper _db = ExtendedExtendedDatabaseHelper.instance;
+  final ExtendedDatabaseHelper _db = ExtendedDatabaseHelper.instance;
 
   // ---- Generate next employee ID ----
   Future<String> generateEmployeeId() async {
@@ -65,8 +65,9 @@ class EmployeeService {
     final newPaid = record.paidAmount + amount;
     final total = record.totalPayable;
     String newStatus;
-    if (newPaid <= 0) newStatus = 'Unpaid';
-    else if (newPaid >= total) newStatus = 'Paid';
+    if (newPaid <= 0) {
+      newStatus = 'Unpaid';
+    } else if (newPaid >= total) newStatus = 'Paid';
     else newStatus = 'Partial';
 
     final updated = SalaryRecord(

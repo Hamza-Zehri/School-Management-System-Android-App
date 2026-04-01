@@ -23,11 +23,13 @@ class _State extends ConsumerState<EmployeeAttendanceScreen> {
 
   Future<void> _loadEmployees() async {
     setState(() => _loading = true);
-    final emps = await ExtendedExtendedDatabaseHelper.instance.getAllEmployees(isActive: true);
-    final existing = await ExtendedExtendedDatabaseHelper.instance.getEmployeeAttendanceByDate(_date);
+    final emps = await ExtendedDatabaseHelper.instance.getAllEmployees(isActive: true);
+    final existing = await ExtendedDatabaseHelper.instance.getEmployeeAttendanceByDate(_date);
     final existingMap = {for (final a in existing) a.employeeId: a.status};
     final statusMap = <int, String>{};
-    for (final e in emps) statusMap[e.id!] = existingMap[e.id] ?? 'Present';
+    for (final e in emps) {
+      statusMap[e.id!] = existingMap[e.id] ?? 'Present';
+    }
     setState(() { _employees = emps; _statusMap = statusMap; _loading = false; });
   }
 
@@ -35,7 +37,7 @@ class _State extends ConsumerState<EmployeeAttendanceScreen> {
     if (_employees.isEmpty) { showSnack(context, 'No employees loaded', isError: true); return; }
     setState(() => _saving = true);
     final records = _employees.map((e) => EmployeeAttendance(employeeId: e.id!, attendanceDate: _date, status: _statusMap[e.id!] ?? 'Present')).toList();
-    await ExtendedExtendedDatabaseHelper.instance.saveEmployeeAttendanceBatch(records);
+    await ExtendedDatabaseHelper.instance.saveEmployeeAttendanceBatch(records);
     // Send SMS to absent employees
     final absentRecords = records.where((r) => r.status == 'Absent').toList();
     for (final r in absentRecords) {
@@ -106,7 +108,7 @@ class _State extends ConsumerState<EmployeeAttendanceScreen> {
                           ],
                           selected: {status},
                           onSelectionChanged: (s) => setState(() => _statusMap[e.id!] = s.first),
-                          style: ButtonStyle(minimumSize: MaterialStateProperty.all(const Size(28, 32))),
+                          style: ButtonStyle(minimumSize: WidgetStateProperty.all(const Size(28, 32))),
                         ),
                       ]),
                     ),
@@ -128,7 +130,9 @@ class _State extends ConsumerState<EmployeeAttendanceScreen> {
   }
 
   Widget _qBtn(String label, String status, Color color) => OutlinedButton(
-    onPressed: () => setState(() { for (final e in _employees) _statusMap[e.id!] = status; }),
+    onPressed: () => setState(() { for (final e in _employees) {
+      _statusMap[e.id!] = status;
+    } }),
     style: OutlinedButton.styleFrom(foregroundColor: color, side: BorderSide(color: color), padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
     child: Text(label, style: const TextStyle(fontSize: 11)),
   );

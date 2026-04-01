@@ -25,7 +25,7 @@ class StatCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppTheme.border),
           boxShadow: [
@@ -52,7 +52,7 @@ class StatCard extends StatelessWidget {
                   child: Icon(icon, color: color, size: 20),
                 ),
                 if (onTap != null)
-                  Icon(Icons.arrow_forward_ios,
+                  const Icon(Icons.arrow_forward_ios,
                       size: 12, color: AppTheme.textSecondary),
               ],
             ),

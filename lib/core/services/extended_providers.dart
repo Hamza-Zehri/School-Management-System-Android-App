@@ -22,6 +22,17 @@ class EmpAttHistoryFilter {
   final String? fromDate;
   final String? toDate;
   const EmpAttHistoryFilter({required this.employeeId, this.fromDate, this.toDate});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is EmpAttHistoryFilter &&
+          other.employeeId == employeeId &&
+          other.fromDate == fromDate &&
+          other.toDate == toDate);
+
+  @override
+  int get hashCode => Object.hash(employeeId, fromDate, toDate);
 }
 
 final empAttHistoryProvider =
@@ -39,6 +50,17 @@ class SalaryFilter {
   final int? year;
   final String? status;
   const SalaryFilter({this.month, this.year, this.status});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SalaryFilter &&
+          other.month == month &&
+          other.year == year &&
+          other.status == status);
+
+  @override
+  int get hashCode => Object.hash(month, year, status);
 }
 
 final salaryRecordsProvider =
@@ -57,6 +79,18 @@ class TestFilter {
   final int? subjectId;
   final String? date;
   const TestFilter({this.classId, this.sectionId, this.subjectId, this.date});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TestFilter &&
+          other.classId == classId &&
+          other.sectionId == sectionId &&
+          other.subjectId == subjectId &&
+          other.date == date);
+
+  @override
+  int get hashCode => Object.hash(classId, sectionId, subjectId, date);
 }
 
 final studentTestsProvider =
@@ -85,6 +119,17 @@ class StudentAttHistoryFilter {
     this.fromDate,
     this.toDate,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is StudentAttHistoryFilter &&
+          other.studentId == studentId &&
+          other.fromDate == fromDate &&
+          other.toDate == toDate);
+
+  @override
+  int get hashCode => Object.hash(studentId, fromDate, toDate);
 }
 
 final studentAttHistoryProvider =

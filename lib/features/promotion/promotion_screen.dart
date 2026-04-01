@@ -23,23 +23,23 @@ class _State extends State<PromotionScreen> {
   void initState() { super.initState(); _loadClasses(); }
 
   Future<void> _loadClasses() async {
-    final c = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getAllClasses();
+    final c = await ExtendedDatabaseHelper.instance.getAllClasses();
     setState(() => _classes = c);
   }
 
   Future<void> _onFromClassChanged(int? v) async {
     setState(() { _fromClassId = v; _fromSectionId = null; _fromSections = []; _students = []; _actions = {}; });
-    if (v != null) { final s = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getSectionsByClass(v); setState(() => _fromSections = s); }
+    if (v != null) { final s = await ExtendedDatabaseHelper.instance.getSectionsByClass(v); setState(() => _fromSections = s); }
   }
 
   Future<void> _onToClassChanged(int? v) async {
     setState(() { _toClassId = v; _toSectionId = null; _toSections = []; });
-    if (v != null) { final s = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getSectionsByClass(v); setState(() => _toSections = s); }
+    if (v != null) { final s = await ExtendedDatabaseHelper.instance.getSectionsByClass(v); setState(() => _toSections = s); }
   }
 
   Future<void> _loadStudents() async {
     if (_fromClassId == null || _fromSectionId == null) { showSnack(context, 'Select from class and section', isError: true); return; }
-    final students = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getStudentsByClassSection(_fromClassId!, _fromSectionId!, isActive: true);
+    final students = await ExtendedDatabaseHelper.instance.getStudentsByClassSection(_fromClassId!, _fromSectionId!, isActive: true);
     final actions = <int, String>{for (final s in students) s.id!: 'promote'};
     setState(() { _students = students; _actions = actions; });
   }
@@ -51,7 +51,9 @@ class _State extends State<PromotionScreen> {
 
     // Build preview
     final counts = {'promote': 0, 'repeat': 0, 'inactive': 0, 'transfer': 0};
-    for (final action in _actions.values) counts[action] = (counts[action] ?? 0) + 1;
+    for (final action in _actions.values) {
+      counts[action] = (counts[action] ?? 0) + 1;
+    }
 
     final ok = await showDialog<bool>(
       context: context,
@@ -120,13 +122,13 @@ class _State extends State<PromotionScreen> {
         const SectionHeader(title: 'From (Current Class)'),
         Row(children: [
           Expanded(child: DropdownButtonFormField<int>(
-            value: _fromClassId, hint: const Text('Class'), decoration: const InputDecoration(labelText: 'From Class'),
+            initialValue: _fromClassId, hint: const Text('Class'), decoration: const InputDecoration(labelText: 'From Class'),
             items: _classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.className))).toList(),
             onChanged: _onFromClassChanged,
           )),
           const SizedBox(width: 8),
           Expanded(child: DropdownButtonFormField<int>(
-            value: _fromSectionId, hint: const Text('Section'), decoration: const InputDecoration(labelText: 'From Section'),
+            initialValue: _fromSectionId, hint: const Text('Section'), decoration: const InputDecoration(labelText: 'From Section'),
             items: _fromSections.map((s) => DropdownMenuItem(value: s.id, child: Text(s.sectionName))).toList(),
             onChanged: (v) => setState(() => _fromSectionId = v),
           )),
@@ -137,13 +139,13 @@ class _State extends State<PromotionScreen> {
         const SectionHeader(title: 'Promote To'),
         Row(children: [
           Expanded(child: DropdownButtonFormField<int>(
-            value: _toClassId, hint: const Text('Class'), decoration: const InputDecoration(labelText: 'To Class'),
+            initialValue: _toClassId, hint: const Text('Class'), decoration: const InputDecoration(labelText: 'To Class'),
             items: _classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.className))).toList(),
             onChanged: _onToClassChanged,
           )),
           const SizedBox(width: 8),
           Expanded(child: DropdownButtonFormField<int>(
-            value: _toSectionId, hint: const Text('Section'), decoration: const InputDecoration(labelText: 'To Section'),
+            initialValue: _toSectionId, hint: const Text('Section'), decoration: const InputDecoration(labelText: 'To Section'),
             items: _toSections.map((s) => DropdownMenuItem(value: s.id, child: Text(s.sectionName))).toList(),
             onChanged: (v) => setState(() => _toSectionId = v),
           )),
@@ -152,7 +154,9 @@ class _State extends State<PromotionScreen> {
           const SizedBox(height: 16),
           SectionHeader(
             title: '${_students.length} Students',
-            action: TextButton(onPressed: () { setState(() { for (final s in _students) _actions[s.id!] = 'promote'; }); }, child: const Text('Set All Promote')),
+            action: TextButton(onPressed: () { setState(() { for (final s in _students) {
+              _actions[s.id!] = 'promote';
+            } }); }, child: const Text('Set All Promote')),
           ),
           ..._students.map((s) => Card(
             margin: const EdgeInsets.only(bottom: 6),
@@ -166,7 +170,7 @@ class _State extends State<PromotionScreen> {
                 DropdownButton<String>(
                   value: _actions[s.id!] ?? 'promote',
                   isDense: true,
-                  items: [
+                  items: const [
                     DropdownMenuItem(value: 'promote', child: Text('Promote', style: TextStyle(color: AppTheme.accent, fontSize: 12))),
                     DropdownMenuItem(value: 'repeat', child: Text('Repeat', style: TextStyle(color: AppTheme.warning, fontSize: 12))),
                     DropdownMenuItem(value: 'inactive', child: Text('Inactive', style: TextStyle(color: AppTheme.danger, fontSize: 12))),

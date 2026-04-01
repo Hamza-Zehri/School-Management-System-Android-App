@@ -86,7 +86,7 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
   Widget _buildStudentList() {
     if (_search.isNotEmpty) {
       return FutureBuilder<List<Student>>(
-        future: ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.searchStudents(_search),
+        future: ExtendedDatabaseHelper.instance.searchStudents(_search),
         builder: (ctx, snap) {
           if (snap.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
           return _buildList(snap.data ?? []);
@@ -118,7 +118,7 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
   }
 
   Future<void> _showFilterSheet() async {
-    final classes = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getAllClasses();
+    final classes = await ExtendedDatabaseHelper.instance.getAllClasses();
     if (!mounted) return;
     await showModalBottomSheet(
       context: context,
@@ -187,7 +187,7 @@ class _FilterSheetState extends State<_FilterSheet> {
   }
 
   Future<void> _loadSections(int classId) async {
-    final s = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getSectionsByClass(classId);
+    final s = await ExtendedDatabaseHelper.instance.getSectionsByClass(classId);
     if (mounted) setState(() => _sections = s);
   }
 
@@ -199,7 +199,7 @@ class _FilterSheetState extends State<_FilterSheet> {
         const Text('Filter Students', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         DropdownButtonFormField<int>(
-          value: _classId, hint: const Text('Select Class'),
+          initialValue: _classId, hint: const Text('Select Class'),
           decoration: const InputDecoration(labelText: 'Class'),
           items: widget.classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.className))).toList(),
           onChanged: (v) { setState(() { _classId = v; _sectionId = null; _sections = []; }); if (v != null) _loadSections(v); },
@@ -207,7 +207,7 @@ class _FilterSheetState extends State<_FilterSheet> {
         if (_sections.isNotEmpty) ...[
           const SizedBox(height: 12),
           DropdownButtonFormField<int>(
-            value: _sectionId, hint: const Text('Select Section'),
+            initialValue: _sectionId, hint: const Text('Select Section'),
             decoration: const InputDecoration(labelText: 'Section'),
             items: _sections.map((s) => DropdownMenuItem(value: s.id, child: Text(s.sectionName))).toList(),
             onChanged: (v) => setState(() => _sectionId = v),

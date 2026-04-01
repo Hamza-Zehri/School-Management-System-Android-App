@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import '../db/extended_database_helper.dart';
 
@@ -54,8 +53,7 @@ class BackupService {
   }
 
   Future<Directory> _getBackupDirectory() async {
-    final externalDir = await getExternalStorageDirectory();
-    final backupPath = '${externalDir!.path}/SchoolManager/Backups';
+    const backupPath = '/storage/emulated/0/Download/School\'s Files/Backups';
     final dir = Directory(backupPath);
     if (!await dir.exists()) await dir.create(recursive: true);
     return dir;

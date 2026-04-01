@@ -44,7 +44,7 @@ class _SendState extends ConsumerState<_SendSmsTab> {
 
   @override
   void initState() { super.initState(); _loadClasses(); }
-  Future<void> _loadClasses() async { final c = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getAllClasses(); setState(() => _classes = c); }
+  Future<void> _loadClasses() async { final c = await ExtendedDatabaseHelper.instance.getAllClasses(); setState(() => _classes = c); }
 
   Future<void> _send() async {
     if (_msgCtrl.text.trim().isEmpty) { showSnack(context, 'Enter a message', isError: true); return; }
@@ -56,13 +56,13 @@ class _SendState extends ConsumerState<_SendSmsTab> {
 
     switch (_sendMode) {
       case 'all':
-        targets = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getAllStudents(isActive: true);
+        targets = await ExtendedDatabaseHelper.instance.getAllStudents(isActive: true);
         break;
       case 'class':
-        if (_classId != null) targets = (await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getAllStudents(isActive: true)).where((s) => s.classId == _classId).toList();
+        if (_classId != null) targets = (await ExtendedDatabaseHelper.instance.getAllStudents(isActive: true)).where((s) => s.classId == _classId).toList();
         break;
       case 'section':
-        if (_classId != null && _sectionId != null) targets = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getStudentsByClassSection(_classId!, _sectionId!, isActive: true);
+        if (_classId != null && _sectionId != null) targets = await ExtendedDatabaseHelper.instance.getStudentsByClassSection(_classId!, _sectionId!, isActive: true);
         break;
       default:
         showSnack(context, 'Custom SMS sent directly requires a phone number', isError: true);
@@ -93,17 +93,17 @@ class _SendState extends ConsumerState<_SendSmsTab> {
     if (_sendMode == 'class' || _sendMode == 'section') ...[
       const SizedBox(height: 12),
       DropdownButtonFormField<int>(
-        value: _classId, hint: const Text('Select Class'), decoration: const InputDecoration(labelText: 'Class'),
+        initialValue: _classId, hint: const Text('Select Class'), decoration: const InputDecoration(labelText: 'Class'),
         items: _classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.className))).toList(),
         onChanged: (v) async {
           setState(() { _classId = v; _sectionId = null; _sections = []; });
-          if (v != null) { final s = await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.getSectionsByClass(v); setState(() => _sections = s); }
+          if (v != null) { final s = await ExtendedDatabaseHelper.instance.getSectionsByClass(v); setState(() => _sections = s); }
         },
       ),
       if (_sendMode == 'section' && _sections.isNotEmpty) ...[
         const SizedBox(height: 8),
         DropdownButtonFormField<int>(
-          value: _sectionId, hint: const Text('Select Section'), decoration: const InputDecoration(labelText: 'Section'),
+          initialValue: _sectionId, hint: const Text('Select Section'), decoration: const InputDecoration(labelText: 'Section'),
           items: _sections.map((s) => DropdownMenuItem(value: s.id, child: Text(s.sectionName))).toList(),
           onChanged: (v) => setState(() => _sectionId = v),
         ),
@@ -182,7 +182,7 @@ class _TemplateTile extends StatelessWidget {
       ),
     );
     if (ok == true) {
-      await ExtendedExtendedExtendedExtendedExtendedDatabaseHelper.instance.updateSmsTemplate(SmsTemplate(id: template.id, templateKey: template.templateKey, templateName: template.templateName, templateBody: ctrl.text));
+      await ExtendedDatabaseHelper.instance.updateSmsTemplate(SmsTemplate(id: template.id, templateKey: template.templateKey, templateName: template.templateName, templateBody: ctrl.text));
       onSaved();
     }
   }

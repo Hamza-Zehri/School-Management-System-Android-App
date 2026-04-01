@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/db/extended_database_helper.dart';
 import '../../core/services/extended_providers.dart';
-import '../../core/services/employee_service.dart';
 import '../../models/extended_models.dart';
 import '../../shared/theme/app_theme.dart';
 import '../../shared/widgets/shared_widgets.dart';
@@ -99,9 +97,11 @@ class _StaffTab extends ConsumerWidget {
             final filtered = search.isNotEmpty
                 ? employees.where((e) => e.fullName.toLowerCase().contains(search.toLowerCase()) || e.employeeId.toLowerCase().contains(search.toLowerCase())).toList()
                 : employees;
-            if (filtered.isEmpty) return EmptyState(message: 'No employees found', icon: Icons.people_outline,
+            if (filtered.isEmpty) {
+              return EmptyState(message: 'No employees found', icon: Icons.people_outline,
               actionLabel: 'Add Employee',
               onAction: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddEditEmployeeScreen())).then((_) => ref.invalidate(employeesProvider)));
+            }
             return ListView.builder(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
               itemCount: filtered.length,
