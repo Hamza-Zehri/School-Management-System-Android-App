@@ -14,16 +14,17 @@ A complete, 100% offline School Management System for Android, built with Flutte
 |---|---|
 | School Setup | First-run wizard, school logo, edit later |
 | Classes & Sections | Add/edit/delete classes and sections |
-| Students | Add/edit/search/filter, registration, guardian info |
+| Students | Add/edit/search/filter, registration, quick delete |
 | Student Promotion | Year-end class promotion with history tracking |
 | Excel Import | Bulk student import from `.xlsx` template |
 | Attendance | Daily attendance by class/section, absent SMS |
-| Fee Management | Monthly fee records, paid/unpaid/partial/overdue |
+| Fee Management | Monthly fee records, paid/unpaid/partial/overdue, student search |
 | Fee Payments | Multiple payments per record, receipt PDF |
 | Marks & Exams | Per-exam marks entry by subject |
 | Daily Tests | Create/track daily classroom tests and scores |
-| Employee Management | Salary tracking, attendance, profile storage |
+| Employee Management | Salary tracking, attendance, profile storage, quick delete |
 | SMS Center | Direct SIM SMS, editable templates, automated alerts |
+| App PIN Lock | 4-digit secure lock, recovery via school name, persistent |
 | Dark Mode | Premium dark theme support with dashboard toggle |
 | Centralized Files | All exports organized in "School's Files" Downloads folder |
 | Backup & Restore | Full JSON export/import, survives reinstall |
@@ -60,11 +61,13 @@ lib/
 │       ├── sms_service.dart      # SMS via Android SIM
 │       ├── fee_service.dart      # Fee record generation & payments
 │       ├── promotion_service.dart # Year-end promotion
+│       ├── security_service.dart # App PIN lock & encryption
 │       ├── pdf_service.dart      # PDF receipts & reports
 │       ├── excel_import_service.dart # .xlsx bulk import
 │       └── backup_service.dart   # JSON backup/restore
 ├── shared/
 │   ├── theme/app_theme.dart    # App colors, typography
+│   └── widgets/lock_screen.dart # PIN entry UI
 │   └── widgets/shared_widgets.dart # Reusable UI components
 └── features/
     ├── setup/                  # First launch + school setup

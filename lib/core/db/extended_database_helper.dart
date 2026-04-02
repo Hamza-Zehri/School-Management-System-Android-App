@@ -538,7 +538,7 @@ class ExtendedDatabaseHelper {
   // FEE RECORDS — FIXED: proper JOIN and null-safe args
   // ============================================================
   Future<List<FeeRecord>> getFeeRecords({
-    int? classId, int? sectionId, int? month, int? year, String? status,
+    int? classId, int? sectionId, int? month, int? year, String? status, String? searchQuery,
   }) async {
     final db = await database;
     final conditions = <String>[];
@@ -549,6 +549,10 @@ class ExtendedDatabaseHelper {
     if (month != null) { conditions.add('fr.month = ?'); args.add(month); }
     if (year != null) { conditions.add('fr.year = ?'); args.add(year); }
     if (status != null && status != 'all') { conditions.add('fr.status = ?'); args.add(status); }
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      conditions.add('(s.full_name LIKE ? OR s.registration_no LIKE ?)');
+      args.addAll(['%$searchQuery%', '%$searchQuery%']);
+    }
 
     final where = conditions.isEmpty ? '' : 'WHERE ${conditions.join(' AND ')}';
     dev.log('[DB] getFeeRecords $where args=$args');

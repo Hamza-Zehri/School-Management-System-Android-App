@@ -154,11 +154,29 @@ class _StudentTile extends StatelessWidget {
         trailing: Row(mainAxisSize: MainAxisSize.min, children: [
           if (!student.isActive) const StatusChip(status: 'inactive'),
           const SizedBox(width: 4),
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+            onPressed: () => _confirmDelete(context),
+          ),
           const Icon(Icons.chevron_right, color: AppTheme.textSecondary),
         ]),
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => StudentProfileScreen(studentId: student.id!))).then((_) => onRefresh()),
       ),
     );
+  }
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final ok = await showConfirmDialog(
+      context,
+      title: 'Delete Student',
+      message: 'Are you sure you want to delete "${student.fullName}"? This action cannot be undone.',
+      confirmText: 'Delete',
+      confirmColor: Colors.red,
+    );
+    if (ok == true) {
+      await ExtendedDatabaseHelper.instance.deleteStudent(student.id!);
+      onRefresh();
+    }
   }
 }
 

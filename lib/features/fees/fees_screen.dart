@@ -20,13 +20,14 @@ class _State extends ConsumerState<FeesScreen> {
   int _year = DateTime.now().year;
   String _status = 'all';
   int? _classId;
+  String _search = '';
 
   static const _months = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   static const _statuses = ['all','unpaid','partial','paid','overdue'];
 
   @override
   Widget build(BuildContext context) {
-    final filter = FeeFilter(classId: _classId, month: _month, year: _year, status: _status == 'all' ? null : _status);
+    final filter = FeeFilter(classId: _classId, month: _month, year: _year, status: _status == 'all' ? null : _status, searchQuery: _search);
     final recordsAsync = ref.watch(feeRecordsProvider(filter));
 
     return Scaffold(
@@ -75,6 +76,17 @@ class _State extends ConsumerState<FeesScreen> {
                   ),
                 )).toList(),
               ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Search by student name or reg no...',
+                prefixIcon: const Icon(Icons.search, size: 20),
+                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                isDense: true,
+                suffixIcon: _search.isNotEmpty ? IconButton(icon: const Icon(Icons.clear, size: 18), onPressed: () => setState(() => _search = '')) : null,
+              ),
+              onChanged: (v) => setState(() => _search = v),
             ),
           ]),
         ),

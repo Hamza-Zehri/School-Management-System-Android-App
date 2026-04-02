@@ -9,6 +9,9 @@ final dbProvider = Provider<ExtendedDatabaseHelper>((ref) => ExtendedDatabaseHel
 // ---- Theme Mode Provider ----
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.light);
 
+// ---- Security Provider ----
+final appLockEnabledProvider = StateProvider<bool>((ref) => false);
+
 // ---- School Settings ----
 final schoolSettingsProvider = FutureProvider<SchoolSettings?>((ref) {
   return ref.read(dbProvider).getSchoolSettings();
@@ -45,13 +48,15 @@ final feeRecordsProvider = FutureProvider.family<List<FeeRecord>, FeeFilter>((re
   return ref.read(dbProvider).getFeeRecords(
     classId: filter.classId, sectionId: filter.sectionId,
     month: filter.month, year: filter.year, status: filter.status,
+    searchQuery: filter.searchQuery,
   );
 });
 
 class FeeFilter {
   final int? classId, sectionId, month, year;
   final String? status;
-  const FeeFilter({this.classId, this.sectionId, this.month, this.year, this.status});
+  final String? searchQuery;
+  const FeeFilter({this.classId, this.sectionId, this.month, this.year, this.status, this.searchQuery});
 
   @override
   bool operator ==(Object other) =>
@@ -62,7 +67,8 @@ class FeeFilter {
           sectionId == other.sectionId &&
           month == other.month &&
           year == other.year &&
-          status == other.status;
+          status == other.status &&
+          searchQuery == other.searchQuery;
 
   @override
   int get hashCode =>
@@ -70,7 +76,8 @@ class FeeFilter {
       sectionId.hashCode ^
       month.hashCode ^
       year.hashCode ^
-      status.hashCode;
+      status.hashCode ^
+      searchQuery.hashCode;
 }
 
 // ---- Exams ----

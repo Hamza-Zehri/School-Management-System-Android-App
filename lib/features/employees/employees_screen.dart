@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/db/extended_database_helper.dart';
 import '../../core/services/extended_providers.dart';
 import '../../models/extended_models.dart';
 import '../../shared/theme/app_theme.dart';
@@ -135,10 +136,29 @@ class _EmpTile extends StatelessWidget {
         ]),
         trailing: Row(mainAxisSize: MainAxisSize.min, children: [
           if (!emp.isActive) const StatusChip(status: 'inactive'),
+          const SizedBox(width: 4),
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+            onPressed: () => _confirmDelete(context),
+          ),
           const Icon(Icons.chevron_right, color: AppTheme.textSecondary),
         ]),
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => EmployeeDetailScreen(employeeId: emp.id!))).then((_) => onRefresh()),
       ),
     );
+  }
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final ok = await showConfirmDialog(
+      context,
+      title: 'Delete Employee',
+      message: 'Are you sure you want to delete "${emp.fullName}"? This action cannot be undone.',
+      confirmText: 'Delete',
+      confirmColor: Colors.red,
+    );
+    if (ok == true) {
+      await ExtendedDatabaseHelper.instance.deleteEmployee(emp.id!);
+      onRefresh();
+    }
   }
 }

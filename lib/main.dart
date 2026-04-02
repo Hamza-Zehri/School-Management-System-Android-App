@@ -5,6 +5,8 @@ import 'core/db/extended_database_helper.dart';
 import 'core/services/providers.dart';
 import 'features/setup/first_launch_screen.dart';
 import 'features/dashboard/dashboard_screen.dart';
+import 'core/services/security_service.dart';
+import 'shared/widgets/lock_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,18 +39,32 @@ class _AppRouter extends StatefulWidget {
 class _AppRouterState extends State<_AppRouter> {
   bool _loading = true;
   bool _hasSchool = false;
+  bool _unlocked = false;
 
   @override
   void initState() { super.initState(); _check(); }
 
   Future<void> _check() async {
     final settings = await ExtendedDatabaseHelper.instance.getSchoolSettings();
-    setState(() { _hasSchool = settings != null; _loading = false; });
+    final lockEnabled = await SecurityService.instance.isLockEnabled();
+    
+    // Sync provider state
+    if (mounted) {
+      final container = ProviderScope.containerOf(context, listen: false);
+      container.read(appLockEnabledProvider.notifier).state = lockEnabled;
+    }
+
+    setState(() {
+      _hasSchool = settings != null;
+      _unlocked = !lockEnabled;
+      _loading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     if (_loading) return const _SplashScreen();
+    if (!_unlocked) return LockScreen(onUnlocked: () => setState(() => _unlocked = true));
     return _hasSchool ? const DashboardScreen() : const FirstLaunchScreen();
   }
 }

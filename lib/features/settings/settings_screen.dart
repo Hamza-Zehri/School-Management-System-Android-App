@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/services/providers.dart';
+import '../../core/services/security_service.dart';
 import '../../shared/theme/app_theme.dart';
 import '../../shared/widgets/shared_widgets.dart';
 import '../setup/school_setup_screen.dart';
@@ -67,6 +68,30 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
+          const SectionHeader(title: 'App Security'),
+          Card(
+            child: Column(
+              children: [
+                SwitchListTile(
+                  secondary: const Icon(Icons.lock_outline, color: AppTheme.primary),
+                  title: const Text('App Lock', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                  subtitle: const Text('Require PIN on startup', style: TextStyle(fontSize: 12)),
+                  value: ref.watch(appLockEnabledProvider),
+                  onChanged: (v) => _toggleLock(context, ref, v),
+                ),
+                if (ref.watch(appLockEnabledProvider)) ...[
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.pin_outlined, color: AppTheme.primary),
+                    title: const Text('Change PIN', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                    trailing: const Icon(Icons.chevron_right, size: 16),
+                    onTap: () => _changePin(context),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
           const SectionHeader(title: 'Management'),
           _tile(context, 'Fee Structure', 'Set monthly fee per class',
               Icons.payments_outlined, const FeeStructureScreen()),
@@ -118,4 +143,63 @@ class SettingsScreen extends ConsumerWidget {
               context, MaterialPageRoute(builder: (_) => screen)),
         ),
       );
+
+  Future<void> _toggleLock(BuildContext context, WidgetRef ref, bool enabled) async {
+    if (enabled) {
+      final pin = await _showPinDialog(context, title: 'Set 4-Digit PIN');
+      if (pin != null && pin.length == 4) {
+        await SecurityService.instance.setPin(pin);
+        await SecurityService.instance.setLockEnabled(true);
+        ref.read(appLockEnabledProvider.notifier).state = true;
+      }
+    } else {
+      final pin = await _showPinDialog(context, title: 'Enter PIN to Disable');
+      if (pin != null) {
+        final ok = await SecurityService.instance.verifyPin(pin);
+        if (ok) {
+          await SecurityService.instance.setLockEnabled(false);
+          ref.read(appLockEnabledProvider.notifier).state = false;
+        } else {
+          if (context.mounted) showSnack(context, 'Incorrect PIN', isError: true);
+        }
+      }
+    }
+  }
+
+  Future<void> _changePin(BuildContext context) async {
+    final oldPin = await _showPinDialog(context, title: 'Enter Old PIN');
+    if (oldPin == null) return;
+    final ok = await SecurityService.instance.verifyPin(oldPin);
+    if (!ok) {
+      if (context.mounted) showSnack(context, 'Incorrect PIN', isError: true);
+      return;
+    }
+    final newPin = await _showPinDialog(context, title: 'Enter New 4-Digit PIN');
+    if (newPin != null && newPin.length == 4) {
+      await SecurityService.instance.setPin(newPin);
+      if (context.mounted) showSnack(context, 'PIN changed successfully');
+    }
+  }
+
+  Future<String?> _showPinDialog(BuildContext context, {required String title}) async {
+    final controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(title, style: const TextStyle(fontSize: 16)),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          maxLength: 4,
+          obscureText: true,
+          decoration: const InputDecoration(labelText: 'PIN', hintText: '****'),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, controller.text), child: const Text('OK')),
+        ],
+      ),
+    );
+  }
 }
