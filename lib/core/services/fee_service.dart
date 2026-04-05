@@ -99,4 +99,68 @@ class FeeService {
       }
     }
   }
+
+  Future<FeeRecord?> deletePayment(int paymentId, int feeRecordId) async {
+    final payments = await _db.getPaymentsByFeeRecord(feeRecordId);
+    final payment = payments.firstWhere((p) => p.id == paymentId);
+
+    await _db.deleteFeePayment(paymentId);
+
+    final feeRecord = await _db.getFeeRecordById(feeRecordId);
+    if (feeRecord == null) return null;
+
+    final newPaidAmount = (feeRecord.paidAmount - payment.paidAmount).clamp(0.0, double.infinity);
+    final finalTotal = feeRecord.totalAmount + feeRecord.fineAmount - feeRecord.discountAmount;
+    final newDue = finalTotal - newPaidAmount;
+
+    String newStatus;
+    if (newPaidAmount <= 0) {
+      newStatus = 'unpaid';
+    } else if (newDue <= 0) {
+      newStatus = 'paid';
+    } else {
+      newStatus = 'partial';
+    }
+
+    final updatedRecord = FeeRecord(
+      id: feeRecord.id, studentId: feeRecord.studentId, classId: feeRecord.classId,
+      sectionId: feeRecord.sectionId, month: feeRecord.month, year: feeRecord.year,
+      totalAmount: feeRecord.totalAmount, discountAmount: feeRecord.discountAmount,
+      fineAmount: feeRecord.fineAmount, paidAmount: newPaidAmount,
+      dueDate: feeRecord.dueDate,
+      paymentDate: newStatus == 'paid' ? feeRecord.paymentDate : null,
+      status: newStatus, remarks: feeRecord.remarks,
+    );
+    await _db.updateFeeRecord(updatedRecord);
+    return updatedRecord;
+  }
+
+  Future<FeeRecord?> updateFeeRecordTotals({
+    required int recordId, required double total, required double discount, required double fine,
+  }) async {
+    final record = await _db.getFeeRecordById(recordId);
+    if (record == null) return null;
+
+    final finalTotal = total + fine - discount;
+    final newDue = finalTotal - record.paidAmount;
+
+    String newStatus;
+    if (record.paidAmount <= 0) {
+      newStatus = 'unpaid';
+    } else if (newDue <= 0) {
+      newStatus = 'paid';
+    } else {
+      newStatus = 'partial';
+    }
+
+    final updated = FeeRecord(
+      id: record.id, studentId: record.studentId, classId: record.classId,
+      sectionId: record.sectionId, month: record.month, year: record.year,
+      totalAmount: total, discountAmount: discount, fineAmount: fine,
+      paidAmount: record.paidAmount, dueDate: record.dueDate,
+      status: newStatus, remarks: record.remarks,
+    );
+    await _db.updateFeeRecord(updated);
+    return updated;
+  }
 }

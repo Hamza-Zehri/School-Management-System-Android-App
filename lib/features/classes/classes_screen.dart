@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/extended_database_helper.dart';
 import '../../core/services/providers.dart';
+import '../../core/services/student_count_providers.dart';
 import '../../models/models.dart';
 import '../../shared/theme/app_theme.dart';
 import '../../shared/widgets/shared_widgets.dart';
+import 'section_students_screen.dart';
 
 class ClassesScreen extends ConsumerWidget {
   const ClassesScreen({super.key});
@@ -122,13 +124,25 @@ class _ClassCard extends ConsumerWidget {
         title: Text(cls.className,
             style: const TextStyle(
                 fontWeight: FontWeight.w600, color: AppTheme.textPrimary)),
-        subtitle: sectionsAsync.when(
-          data: (sections) => Text('${sections.length} sections',
-              style: const TextStyle(
-                  fontSize: 12, color: AppTheme.textSecondary)),
-          loading: () => const Text('Loading...'),
-          error: (_, __) => const SizedBox(),
-        ),
+        subtitle: Consumer(builder: (context, ref, _) {
+          final sectionsAsync = ref.watch(sectionsByClassProvider(cls.id!));
+          final countsAsync = ref.watch(classStudentCountsProvider);
+          return Row(
+            children: [
+              sectionsAsync.maybeWhen(
+                data: (sections) => Text('${sections.length} sections',
+                    style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+                orElse: () => const Text('Loading sections...', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+              ),
+              const Text(' • ', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+              countsAsync.maybeWhen(
+                data: (counts) => Text('${counts[cls.id] ?? 0} students',
+                    style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+                orElse: () => const Text('0 students', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+              ),
+            ],
+          );
+        }),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -153,7 +167,7 @@ class _ClassCard extends ConsumerWidget {
             error: (e, _) => Text('Error: $e'),
             data: (sections) => _SectionsList(
               sections: sections,
-              classId: cls.id!,
+              cls: cls,
               ref: ref,
             ),
           ),
@@ -206,11 +220,11 @@ class _ClassCard extends ConsumerWidget {
 
 class _SectionsList extends ConsumerWidget {
   final List<Section> sections;
-  final int classId;
+  final SchoolClass cls;
   final WidgetRef ref;
 
   const _SectionsList(
-      {required this.sections, required this.classId, required this.ref});
+      {required this.sections, required this.cls, required this.ref});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -246,19 +260,22 @@ class _SectionsList extends ConsumerWidget {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: sections
-                  .map((s) => Chip(
-                        label: Text(s.sectionName),
-                        deleteIcon: const Icon(Icons.close, size: 14),
-                        onDeleted: () => _deleteSection(context, s, ref),
-                        backgroundColor:
-                            AppTheme.primary.withOpacity(0.08),
-                        side: BorderSide(
-                            color: AppTheme.primary.withOpacity(0.2)),
-                        labelStyle: const TextStyle(
-                            fontSize: 12, color: AppTheme.primary),
-                      ))
-                  .toList(),
+              children: sections.map((s) => Consumer(builder: (context, ref, _) {
+                final counts = ref.watch(sectionStudentCountsProvider).valueOrNull ?? {};
+                final count = counts[s.id] ?? 0;
+                return InputChip(
+                  label: Text('${s.sectionName} ($count)'),
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => SectionStudentsScreen(cls: cls, section: s))),
+                  onDeleted: () => _deleteSection(context, s, ref),
+                  deleteIcon: const Icon(Icons.close, size: 14),
+                  backgroundColor: AppTheme.primary.withOpacity(0.08),
+                  side: BorderSide(color: AppTheme.primary.withOpacity(0.2)),
+                  labelStyle: const TextStyle(fontSize: 12, color: AppTheme.primary),
+                );
+              })).toList(),
             ),
         ],
       ),
@@ -290,8 +307,8 @@ class _SectionsList extends ConsumerWidget {
     );
     if (result == true && ctrl.text.trim().isNotEmpty) {
       await ExtendedDatabaseHelper.instance.insertSection(
-          Section(classId: classId, sectionName: ctrl.text.trim().toUpperCase()));
-      ref.invalidate(sectionsByClassProvider(classId));
+          Section(classId: cls.id!, sectionName: ctrl.text.trim().toUpperCase()));
+      ref.invalidate(sectionsByClassProvider(cls.id!));
     }
   }
 
@@ -304,7 +321,7 @@ class _SectionsList extends ConsumerWidget {
     );
     if (confirmed) {
       await ExtendedDatabaseHelper.instance.deleteSection(s.id!);
-      ref.invalidate(sectionsByClassProvider(classId));
+      ref.invalidate(sectionsByClassProvider(cls.id!));
     }
   }
 }

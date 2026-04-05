@@ -13,16 +13,15 @@ A complete, 100% offline School Management System for Android, built with Flutte
 | Module | Features |
 |---|---|
 | School Setup | First-run wizard, school logo, edit later |
-| Classes & Sections | Add/edit/delete classes and sections |
-| Students | Add/edit/search/filter, registration, quick delete |
-| Student Promotion | Year-end class promotion with history tracking |
+| Classes & Sections | Add/edit/delete classes and sections, **student counts per class/section** |
+| Students | Add/edit/search/filter, registration, quick delete, **list by section** |
 | Excel Import | Bulk student import from `.xlsx` template |
 | Attendance | Daily attendance by class/section, absent SMS |
-| Fee Management | Monthly fee records, paid/unpaid/partial/overdue, student search |
-| Fee Payments | Multiple payments per record, receipt PDF |
+| Fee Management | Monthly records, **edit totals/discounts**, **remove specific payments**, **class/section filtering** |
+| Fee Payments | Multiple payments per record, receipt PDF, **payment history with deletion** |
 | Marks & Exams | Per-exam marks entry by subject |
 | Daily Tests | Create/track daily classroom tests and scores |
-| Employee Management | Salary tracking, attendance, profile storage, quick delete |
+| Employee Management | **Edit employee details**, salary tracking, attendance, **payment history with deletion** |
 | SMS Center | Direct SIM SMS, editable templates, automated alerts |
 | App PIN Lock | 4-digit secure lock, recovery via school name, persistent |
 | Dark Mode | Premium dark theme support with dashboard toggle |

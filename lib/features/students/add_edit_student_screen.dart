@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/extended_database_helper.dart';
+import '../../core/services/student_count_providers.dart';
 import '../../models/models.dart';
 import '../../shared/theme/app_theme.dart';
 import '../../shared/widgets/shared_widgets.dart';
@@ -72,8 +73,16 @@ class _State extends ConsumerState<AddEditStudentScreen> {
       address: _addr.text.trim().isEmpty ? null : _addr.text.trim(), isActive: _active,
     );
     try {
-      if (widget.student == null) { await ExtendedDatabaseHelper.instance.insertStudent(s); if (mounted) showSnack(context, 'Student added'); }
-      else { await ExtendedDatabaseHelper.instance.updateStudent(s); if (mounted) showSnack(context, 'Student updated'); }
+      if (widget.student == null) { 
+        await ExtendedDatabaseHelper.instance.insertStudent(s); 
+        if (mounted) showSnack(context, 'Student added'); 
+      }
+      else { 
+        await ExtendedDatabaseHelper.instance.updateStudent(s); 
+        if (mounted) showSnack(context, 'Student updated'); 
+      }
+      ref.invalidate(classStudentCountsProvider);
+      ref.invalidate(sectionStudentCountsProvider);
       if (mounted) Navigator.pop(context);
     } catch (e) { if (mounted) showSnack(context, 'Error: $e', isError: true); }
     setState(() => _saving = false);

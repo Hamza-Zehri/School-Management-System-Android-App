@@ -117,8 +117,8 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               const SectionHeader(title: 'Employees Overview'),
               GridView.count(
-                crossAxisCount: 3, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 10, crossAxisSpacing: 10, childAspectRatio: 1.4,
+                crossAxisCount: 2, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 12, crossAxisSpacing: 12, childAspectRatio: 1.5,
                 children: [
                   StatCard(label: 'Total Staff', value: '${stats.totalEmployees}', icon: Icons.badge_outlined, color: AppTheme.primaryDark, onTap: () => _go(context, const EmployeesScreen())),
                   StatCard(label: 'Present Today', value: '${stats.presentEmployeesToday}', icon: Icons.how_to_reg_outlined, color: AppTheme.accent, onTap: () => _go(context, const EmployeesScreen())),

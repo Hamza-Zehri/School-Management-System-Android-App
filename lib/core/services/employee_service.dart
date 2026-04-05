@@ -115,4 +115,75 @@ class EmployeeService {
     });
     return SmsService.instance.sendSms(phone: emp.phone, message: msg, purpose: 'employee_absent');
   }
+
+  Future<SalaryRecord?> deleteSalaryPayment(int paymentId, int salaryRecordId) async {
+    final payments = await _db.getSalaryPaymentsByRecord(salaryRecordId);
+    final payment = payments.firstWhere((p) => p.id == paymentId);
+
+    await _db.deleteSalaryPayment(paymentId);
+
+    final record = await _db.getSalaryRecordById(salaryRecordId);
+    if (record == null) return null;
+
+    final newPaid = (record.paidAmount - payment.amount).clamp(0.0, double.infinity);
+    final total = record.totalPayable;
+    String newStatus;
+    if (newPaid <= 0) {
+      newStatus = 'Unpaid';
+    } else if (newPaid >= total) {
+      newStatus = 'Paid';
+    } else {
+      newStatus = 'Partial';
+    }
+
+    final updated = SalaryRecord(
+      id: record.id,
+      employeeId: record.employeeId,
+      month: record.month,
+      year: record.year,
+      basicSalary: record.basicSalary,
+      bonus: record.bonus,
+      deduction: record.deduction,
+      paidAmount: newPaid,
+      paymentDate: newStatus == 'Paid' ? record.paymentDate : null,
+      status: newStatus,
+      remarks: record.remarks,
+    );
+    await _db.updateSalaryRecord(updated);
+    return updated;
+  }
+
+  Future<SalaryRecord?> updateSalaryRecordTotals({
+    required int recordId, required double bonus, required double deduction,
+  }) async {
+    final record = await _db.getSalaryRecordById(recordId);
+    if (record == null) return null;
+
+    final total = record.basicSalary + bonus - deduction;
+    final newDue = total - record.paidAmount;
+
+    String newStatus;
+    if (record.paidAmount <= 0) {
+      newStatus = 'Unpaid';
+    } else if (newDue <= 0) {
+      newStatus = 'Paid';
+    } else {
+      newStatus = 'Partial';
+    }
+
+    final updated = SalaryRecord(
+      id: record.id,
+      employeeId: record.employeeId,
+      month: record.month,
+      year: record.year,
+      basicSalary: record.basicSalary,
+      bonus: bonus,
+      deduction: deduction,
+      paidAmount: record.paidAmount,
+      status: newStatus,
+      remarks: record.remarks,
+    );
+    await _db.updateSalaryRecord(updated);
+    return updated;
+  }
 }

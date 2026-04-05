@@ -55,6 +55,62 @@ class _State extends State<FeePaymentScreen> {
     setState(() => _saving = false);
   }
 
+  Future<void> _confirmDeletePayment(BuildContext context, FeePayment p) async {
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Delete Payment',
+      message: 'Are you sure you want to delete this payment of Rs.${p.paidAmount.toStringAsFixed(0)}? This will recharge the due amount.',
+      confirmText: 'Delete',
+      confirmColor: AppTheme.danger,
+    );
+    if (confirmed) {
+      final updated = await FeeService.instance.deletePayment(p.id!, _record.id!);
+      if (updated != null) {
+        setState(() => _record = updated);
+        await _loadPayments();
+        if (mounted) showSnack(context, 'Payment deleted');
+      }
+    }
+  }
+
+  Future<void> _showEditRecordDialog(BuildContext context) async {
+    final totalCtrl = TextEditingController(text: _record.totalAmount.toStringAsFixed(0));
+    final discCtrl = TextEditingController(text: _record.discountAmount.toStringAsFixed(0));
+    final fineCtrl = TextEditingController(text: _record.fineAmount.toStringAsFixed(0));
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit Fee Record'),
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          TextField(controller: totalCtrl, decoration: const InputDecoration(labelText: 'Original Total (Rs.)'), keyboardType: TextInputType.number),
+          const SizedBox(height: 12),
+          TextField(controller: discCtrl, decoration: const InputDecoration(labelText: 'Discount (Rs.)'), keyboardType: TextInputType.number),
+          const SizedBox(height: 12),
+          TextField(controller: fineCtrl, decoration: const InputDecoration(labelText: 'Fine (Rs.)'), keyboardType: TextInputType.number),
+        ]),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Save')),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      final t = double.tryParse(totalCtrl.text.trim()) ?? _record.totalAmount;
+      final d = double.tryParse(discCtrl.text.trim()) ?? _record.discountAmount;
+      final f = double.tryParse(fineCtrl.text.trim()) ?? _record.fineAmount;
+
+      final updated = await FeeService.instance.updateFeeRecordTotals(
+        recordId: _record.id!, total: t, discount: d, fine: f,
+      );
+      if (updated != null) {
+        setState(() => _record = updated);
+        if (mounted) showSnack(context, 'Fee record updated');
+      }
+    }
+  }
+
   @override
   void dispose() { _amtCtrl.dispose(); super.dispose(); }
 
@@ -70,8 +126,14 @@ class _State extends State<FeePaymentScreen> {
             padding: const EdgeInsets.all(16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(r.studentName ?? '-', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                StatusChip(status: r.status),
+                Expanded(child: Text(r.studentName ?? '-', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), overflow: TextOverflow.ellipsis)),
+                Row(children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit_outlined, size: 20, color: AppTheme.primary),
+                    onPressed: () => _showEditRecordDialog(context),
+                  ),
+                  StatusChip(status: r.status),
+                ]),
               ]),
               const SizedBox(height: 4),
               Text('${r.className ?? ''} - ${r.sectionName ?? ''}', style: const TextStyle(color: AppTheme.textSecondary)),
@@ -130,8 +192,15 @@ class _State extends State<FeePaymentScreen> {
                 title: Text('Rs. ${p.paidAmount.toStringAsFixed(0)}',
                     style: const TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Text('${p.paymentDate} • ${p.receiptNo}'),
-                trailing: Text(p.paymentMethod ?? '',
-                    style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+                trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Text(p.paymentMethod ?? '',
+                      style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+                  const SizedBox(width: 4),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline, size: 20, color: Colors.red),
+                    onPressed: () => _confirmDeletePayment(context, p),
+                  ),
+                ]),
               ),
             )),
           ],

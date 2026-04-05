@@ -138,6 +138,13 @@ class _EmpTile extends StatelessWidget {
           if (!emp.isActive) const StatusChip(status: 'inactive'),
           const SizedBox(width: 4),
           IconButton(
+            icon: const Icon(Icons.edit_outlined, color: AppTheme.primary, size: 20),
+            onPressed: () async {
+              await Navigator.push(context, MaterialPageRoute(builder: (_) => AddEditEmployeeScreen(employee: emp)));
+              onRefresh();
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
             onPressed: () => _confirmDelete(context),
           ),

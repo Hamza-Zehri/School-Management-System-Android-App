@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/extended_database_helper.dart';
 import '../../core/services/providers.dart';
+import '../../core/services/student_count_providers.dart';
 import '../../models/models.dart';
 import '../../shared/theme/app_theme.dart';
 import '../../shared/widgets/shared_widgets.dart';
@@ -93,13 +94,23 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
         },
       );
     }
-    if (_filterClassId != null && _filterSectionId != null) {
-      final key = (classId: _filterClassId!, sectionId: _filterSectionId!);
-      return ref.watch(studentsByClassSectionProvider(key)).when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
-        data: (s) => _buildList(_filterActive != null ? s.where((x) => x.isActive == _filterActive).toList() : s),
-      );
+    if (_filterClassId != null) {
+      if (_filterSectionId != null) {
+        final key = (classId: _filterClassId!, sectionId: _filterSectionId!);
+        return ref.watch(studentsByClassSectionProvider(key)).when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Center(child: Text('Error: $e')),
+          data: (s) => _buildList(_filterActive != null ? s.where((x) => x.isActive == _filterActive).toList() : s),
+        );
+      } else {
+        return FutureBuilder<List<Student>>(
+          future: ExtendedDatabaseHelper.instance.getStudentsByClass(_filterClassId!, isActive: _filterActive),
+          builder: (ctx, snap) {
+            if (snap.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
+            return _buildList(snap.data ?? []);
+          },
+        );
+      }
     }
     return ref.watch(allStudentsProvider).when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -113,7 +124,12 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
       itemCount: students.length,
-      itemBuilder: (ctx, i) => _StudentTile(student: students[i], onRefresh: () { ref.invalidate(allStudentsProvider); setState(() {}); }),
+      itemBuilder: (ctx, i) => _StudentTile(student: students[i], onRefresh: () { 
+        ref.invalidate(allStudentsProvider); 
+        ref.invalidate(classStudentCountsProvider);
+        ref.invalidate(sectionStudentCountsProvider);
+        setState(() {}); 
+      }),
     );
   }
 
@@ -154,6 +170,13 @@ class _StudentTile extends StatelessWidget {
         trailing: Row(mainAxisSize: MainAxisSize.min, children: [
           if (!student.isActive) const StatusChip(status: 'inactive'),
           const SizedBox(width: 4),
+          IconButton(
+            icon: const Icon(Icons.edit_outlined, color: AppTheme.primary, size: 20),
+            onPressed: () async {
+              await Navigator.push(context, MaterialPageRoute(builder: (_) => AddEditStudentScreen(student: student)));
+              onRefresh();
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
             onPressed: () => _confirmDelete(context),
@@ -211,33 +234,39 @@ class _FilterSheetState extends State<_FilterSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('Filter Students', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 16),
-        DropdownButtonFormField<int>(
-          initialValue: _classId, hint: const Text('Select Class'),
-          decoration: const InputDecoration(labelText: 'Class'),
-          items: widget.classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.className))).toList(),
-          onChanged: (v) { setState(() { _classId = v; _sectionId = null; _sections = []; }); if (v != null) _loadSections(v); },
-        ),
-        if (_sections.isNotEmpty) ...[
-          const SizedBox(height: 12),
+    return Consumer(builder: (context, ref, _) {
+      final counts = ref.watch(classStudentCountsProvider).valueOrNull ?? {};
+      return Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text('Filter Students', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
           DropdownButtonFormField<int>(
-            initialValue: _sectionId, hint: const Text('Select Section'),
-            decoration: const InputDecoration(labelText: 'Section'),
-            items: _sections.map((s) => DropdownMenuItem(value: s.id, child: Text(s.sectionName))).toList(),
-            onChanged: (v) => setState(() => _sectionId = v),
+            initialValue: _classId, hint: const Text('Select Class'),
+            decoration: const InputDecoration(labelText: 'Class'),
+            items: widget.classes.map((c) {
+              final count = counts[c.id] ?? 0;
+              return DropdownMenuItem(value: c.id, child: Text('${c.className} ($count)'));
+            }).toList(),
+            onChanged: (v) { setState(() { _classId = v; _sectionId = null; _sections = []; }); if (v != null) _loadSections(v); },
           ),
-        ],
-        const SizedBox(height: 20),
-        Row(children: [
-          Expanded(child: OutlinedButton(onPressed: () { widget.onApply(null, null); Navigator.pop(context); }, child: const Text('Clear'))),
-          const SizedBox(width: 12),
-          Expanded(child: ElevatedButton(onPressed: () { widget.onApply(_classId, _sectionId); Navigator.pop(context); }, child: const Text('Apply'))),
+          if (_sections.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            DropdownButtonFormField<int>(
+              initialValue: _sectionId, hint: const Text('Select Section'),
+              decoration: const InputDecoration(labelText: 'Section'),
+              items: _sections.map((s) => DropdownMenuItem(value: s.id, child: Text(s.sectionName))).toList(),
+              onChanged: (v) => setState(() => _sectionId = v),
+            ),
+          ],
+          const SizedBox(height: 20),
+          Row(children: [
+            Expanded(child: OutlinedButton(onPressed: () { widget.onApply(null, null); Navigator.pop(context); }, child: const Text('Clear'))),
+            const SizedBox(width: 12),
+            Expanded(child: ElevatedButton(onPressed: () { widget.onApply(_classId, _sectionId); Navigator.pop(context); }, child: const Text('Apply'))),
+          ]),
         ]),
-      ]),
-    );
+      );
+    });
   }
 }

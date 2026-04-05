@@ -77,27 +77,27 @@ class ExtendedDatabaseHelper {
       guardian_name TEXT NOT NULL, guardian_phone TEXT NOT NULL,
       guardian_phone_2 TEXT, class_id INTEGER NOT NULL, section_id INTEGER NOT NULL,
       gender TEXT DEFAULT 'Male', dob TEXT, address TEXT, is_active INTEGER DEFAULT 1,
-      FOREIGN KEY (class_id) REFERENCES classes(id),
-      FOREIGN KEY (section_id) REFERENCES sections(id))''');
+      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+      FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE CASCADE)''');
 
     await db.execute('''CREATE TABLE student_promotions (
       id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL,
       old_class_id INTEGER NOT NULL, old_section_id INTEGER NOT NULL,
       new_class_id INTEGER NOT NULL, new_section_id INTEGER NOT NULL,
       promotion_year TEXT NOT NULL, promoted_on TEXT NOT NULL, remarks TEXT,
-      status TEXT DEFAULT 'promoted', FOREIGN KEY (student_id) REFERENCES students(id))''');
+      status TEXT DEFAULT 'promoted', FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE)''');
 
     await db.execute('''CREATE TABLE attendance (
       id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL,
       attendance_date TEXT NOT NULL, status TEXT NOT NULL, remarks TEXT,
       UNIQUE(student_id, attendance_date),
-      FOREIGN KEY (student_id) REFERENCES students(id))''');
+      FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE)''');
 
     await db.execute('''CREATE TABLE fee_structures (
       id INTEGER PRIMARY KEY AUTOINCREMENT, class_id INTEGER NOT NULL UNIQUE,
       monthly_fee REAL DEFAULT 0, exam_fee REAL DEFAULT 0,
       transport_fee REAL DEFAULT 0, other_fee REAL DEFAULT 0,
-      FOREIGN KEY (class_id) REFERENCES classes(id))''');
+      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE)''');
 
     await db.execute('''CREATE TABLE fee_records (
       id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL,
@@ -107,31 +107,31 @@ class ExtendedDatabaseHelper {
       paid_amount REAL DEFAULT 0, due_date TEXT, payment_date TEXT,
       status TEXT DEFAULT 'unpaid', remarks TEXT,
       UNIQUE(student_id, month, year),
-      FOREIGN KEY (student_id) REFERENCES students(id))''');
+      FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE)''');
 
     await db.execute('''CREATE TABLE fee_payments (
       id INTEGER PRIMARY KEY AUTOINCREMENT, fee_record_id INTEGER NOT NULL,
       receipt_no TEXT NOT NULL UNIQUE, paid_amount REAL NOT NULL,
       payment_date TEXT NOT NULL, payment_method TEXT, remarks TEXT,
-      FOREIGN KEY (fee_record_id) REFERENCES fee_records(id))''');
+      FOREIGN KEY (fee_record_id) REFERENCES fee_records(id) ON DELETE CASCADE)''');
 
     await db.execute('''CREATE TABLE exams (
       id INTEGER PRIMARY KEY AUTOINCREMENT, exam_name TEXT NOT NULL,
       class_id INTEGER NOT NULL, section_id INTEGER NOT NULL,
-      exam_date TEXT, description TEXT, FOREIGN KEY (class_id) REFERENCES classes(id))''');
+      exam_date TEXT, description TEXT, FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE)''');
 
     await db.execute('''CREATE TABLE subjects (
       id INTEGER PRIMARY KEY AUTOINCREMENT, subject_name TEXT NOT NULL,
-      class_id INTEGER NOT NULL, FOREIGN KEY (class_id) REFERENCES classes(id))''');
+      class_id INTEGER NOT NULL, FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE)''');
 
     await db.execute('''CREATE TABLE marks (
       id INTEGER PRIMARY KEY AUTOINCREMENT, exam_id INTEGER NOT NULL,
       student_id INTEGER NOT NULL, subject_id INTEGER NOT NULL,
       total_marks REAL DEFAULT 0, obtained_marks REAL DEFAULT 0, remarks TEXT,
       UNIQUE(exam_id, student_id, subject_id),
-      FOREIGN KEY (exam_id) REFERENCES exams(id),
-      FOREIGN KEY (student_id) REFERENCES students(id),
-      FOREIGN KEY (subject_id) REFERENCES subjects(id))''');
+      FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE,
+      FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+      FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE)''');
 
     await db.execute('''CREATE TABLE sms_templates (
       id INTEGER PRIMARY KEY AUTOINCREMENT, template_key TEXT NOT NULL UNIQUE,
@@ -175,7 +175,7 @@ class ExtendedDatabaseHelper {
       status TEXT NOT NULL,
       remarks TEXT,
       UNIQUE(employee_id, attendance_date),
-      FOREIGN KEY (employee_id) REFERENCES employees(id)
+      FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
     )''');
 
     // ---- salary_records ----
@@ -192,7 +192,7 @@ class ExtendedDatabaseHelper {
       status TEXT DEFAULT 'Unpaid',
       remarks TEXT,
       UNIQUE(employee_id, month, year),
-      FOREIGN KEY (employee_id) REFERENCES employees(id)
+      FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
     )''');
 
     // ---- salary_payments ----
@@ -203,7 +203,7 @@ class ExtendedDatabaseHelper {
       payment_date TEXT NOT NULL,
       method TEXT,
       remarks TEXT,
-      FOREIGN KEY (salary_record_id) REFERENCES salary_records(id)
+      FOREIGN KEY (salary_record_id) REFERENCES salary_records(id) ON DELETE CASCADE
     )''');
 
     // ---- student_tests ----
@@ -215,9 +215,9 @@ class ExtendedDatabaseHelper {
       subject_id INTEGER NOT NULL,
       title TEXT,
       created_at TEXT,
-      FOREIGN KEY (class_id) REFERENCES classes(id),
-      FOREIGN KEY (section_id) REFERENCES sections(id),
-      FOREIGN KEY (subject_id) REFERENCES subjects(id)
+      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+      FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE CASCADE,
+      FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE
     )''');
 
     // ---- student_test_marks ----
@@ -229,8 +229,8 @@ class ExtendedDatabaseHelper {
       obtained_marks REAL DEFAULT 0,
       remarks TEXT,
       UNIQUE(test_id, student_id),
-      FOREIGN KEY (test_id) REFERENCES student_tests(id),
-      FOREIGN KEY (student_id) REFERENCES students(id)
+      FOREIGN KEY (test_id) REFERENCES student_tests(id) ON DELETE CASCADE,
+      FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
     )''');
 
     dev.log('[DB] Extended tables created/verified');
@@ -388,6 +388,26 @@ class ExtendedDatabaseHelper {
     return maps.map((m) => Student.fromMap(m)).toList();
   }
 
+  Future<List<Student>> getStudentsByClass(int classId, {bool? isActive}) async {
+    final db = await database;
+    final conditions = <String>['s.class_id = ?'];
+    final args = <dynamic>[classId];
+    if (isActive != null) {
+      conditions.add('s.is_active = ?');
+      args.add(isActive ? 1 : 0);
+    }
+    final where = conditions.join(' AND ');
+    final maps = await db.rawQuery('''
+      SELECT s.*, c.class_name, sec.section_name
+      FROM students s
+      LEFT JOIN classes c ON s.class_id = c.id
+      LEFT JOIN sections sec ON s.section_id = sec.id
+      WHERE $where
+      ORDER BY sec.section_name, CAST(s.roll_no AS INTEGER), s.full_name
+    ''', args);
+    return maps.map((m) => Student.fromMap(m)).toList();
+  }
+
   Future<List<Student>> searchStudents(String query) async {
     final db = await database;
     final maps = await db.rawQuery('''
@@ -419,9 +439,20 @@ class ExtendedDatabaseHelper {
     return maps.isEmpty ? null : Student.fromMap(maps.first);
   }
 
-  Future<int> insertStudent(Student student) async => await (await database).insert('students', student.toMap());
-  Future<int> updateStudent(Student student) async => await (await database).update('students', student.toMap(), where: 'id = ?', whereArgs: [student.id]);
-  Future<int> deleteStudent(int id) async => await (await database).delete('students', where: 'id = ?', whereArgs: [id]);
+  Future<int> insertStudent(Student s) async => await (await database).insert('students', s.toMap());
+  Future<int> updateStudent(Student s) async => await (await database).update('students', s.toMap(), where: 'id = ?', whereArgs: [s.id]);
+  Future<int> deleteStudent(int id) async {
+    final db = await database;
+    return await db.transaction((txn) async {
+      // Manually handle cascade if foreign key ON DELETE CASCADE is not active
+      await txn.delete('attendance', where: 'student_id = ?', whereArgs: [id]);
+      await txn.delete('fee_records', where: 'student_id = ?', whereArgs: [id]);
+      await txn.delete('marks', where: 'student_id = ?', whereArgs: [id]);
+      await txn.delete('student_test_marks', where: 'student_id = ?', whereArgs: [id]);
+      await txn.delete('student_promotions', where: 'student_id = ?', whereArgs: [id]);
+      return await txn.delete('students', where: 'id = ?', whereArgs: [id]);
+    });
+  }
 
   Future<int> getTotalStudentCount({bool? isActive}) async {
     final db = await database;
@@ -642,6 +673,9 @@ class ExtendedDatabaseHelper {
     return result.first['counter_value'] as int;
   }
 
+  Future<int> deleteFeePayment(int id) async => await (await database).delete('fee_payments', where: 'id = ?', whereArgs: [id]);
+  Future<int> deleteFeeRecord(int id) async => await (await database).delete('fee_records', where: 'id = ?', whereArgs: [id]);
+
   // ============================================================
   // STUDENT PROMOTIONS
   // ============================================================
@@ -756,10 +790,17 @@ class ExtendedDatabaseHelper {
     return maps.map((m) => Employee.fromMap(m)).toList();
   }
 
-  Future<int> insertEmployee(Employee emp) async => await (await database).insert('employees', emp.toMap());
-  Future<int> updateEmployee(Employee emp) async =>
-      await (await database).update('employees', emp.toMap(), where: 'id = ?', whereArgs: [emp.id]);
-  Future<int> deleteEmployee(int id) async => await (await database).delete('employees', where: 'id = ?', whereArgs: [id]);
+  Future<int> insertEmployee(Employee e) async => await (await database).insert('employees', e.toMap());
+  Future<int> updateEmployee(Employee e) async =>
+      await (await database).update('employees', e.toMap(), where: 'id = ?', whereArgs: [e.id]);
+  Future<int> deleteEmployee(int id) async {
+    final db = await database;
+    return await db.transaction((txn) async {
+      await txn.delete('employee_attendance', where: 'employee_id = ?', whereArgs: [id]);
+      await txn.delete('salary_records', where: 'employee_id = ?', whereArgs: [id]);
+      return await txn.delete('employees', where: 'id = ?', whereArgs: [id]);
+    });
+  }
   Future<int> getTotalEmployeeCount({bool? isActive}) async {
     final db = await database;
     final result = await db.rawQuery('SELECT COUNT(*) as cnt FROM employees ${isActive != null ? 'WHERE is_active=${isActive ? 1 : 0}' : ''}');
@@ -892,6 +933,9 @@ class ExtendedDatabaseHelper {
     final maps = await db.query('salary_payments', where: 'salary_record_id = ?', whereArgs: [salaryRecordId], orderBy: 'payment_date DESC');
     return maps.map((m) => SalaryPayment.fromMap(m)).toList();
   }
+
+  Future<int> deleteSalaryPayment(int id) async => await (await database).delete('salary_payments', where: 'id = ?', whereArgs: [id]);
+  Future<int> deleteSalaryRecord(int id) async => await (await database).delete('salary_records', where: 'id = ?', whereArgs: [id]);
 
   // ============================================================
   // STUDENT TESTS
@@ -1037,5 +1081,17 @@ class ExtendedDatabaseHelper {
     final db = await database;
     await db.close();
     _database = null;
+  }
+
+  Future<Map<int, int>> getClassStudentCounts() async {
+    final db = await database;
+    final maps = await db.rawQuery('SELECT class_id, COUNT(*) as cnt FROM students WHERE is_active = 1 GROUP BY class_id');
+    return {for (final m in maps) m['class_id'] as int: m['cnt'] as int};
+  }
+
+  Future<Map<int, int>> getSectionStudentCounts() async {
+    final db = await database;
+    final maps = await db.rawQuery('SELECT section_id, COUNT(*) as cnt FROM students WHERE is_active = 1 GROUP BY section_id');
+    return {for (final m in maps) m['section_id'] as int: m['cnt'] as int};
   }
 }

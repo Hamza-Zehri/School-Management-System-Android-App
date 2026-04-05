@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/extended_database_helper.dart';
 import '../../core/services/providers.dart';
+import '../../core/services/student_count_providers.dart';
 import '../../core/services/fee_service.dart';
 import '../../core/services/pdf_service.dart';
 import '../../models/models.dart';
@@ -20,6 +21,7 @@ class _State extends ConsumerState<FeesScreen> {
   int _year = DateTime.now().year;
   String _status = 'all';
   int? _classId;
+  int? _sectionId;
   String _search = '';
 
   static const _months = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -27,7 +29,7 @@ class _State extends ConsumerState<FeesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final filter = FeeFilter(classId: _classId, month: _month, year: _year, status: _status == 'all' ? null : _status, searchQuery: _search);
+    final filter = FeeFilter(classId: _classId, sectionId: _sectionId, month: _month, year: _year, status: _status == 'all' ? null : _status, searchQuery: _search);
     final recordsAsync = ref.watch(feeRecordsProvider(filter));
 
     return Scaffold(
@@ -88,6 +90,47 @@ class _State extends ConsumerState<FeesScreen> {
               ),
               onChanged: (v) => setState(() => _search = v),
             ),
+            const SizedBox(height: 8),
+            Row(children: [
+              Expanded(child: Consumer(builder: (context, ref, _) {
+                final classes = ref.watch(classesProvider).valueOrNull ?? [];
+                final counts = ref.watch(classStudentCountsProvider).valueOrNull ?? {};
+                return DropdownButtonFormField<int>(
+                  isExpanded: true,
+                  value: _classId,
+                  hint: const Text('Filter by Class', style: TextStyle(fontSize: 12)),
+                  decoration: const InputDecoration(isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8)),
+                  items: [
+                    const DropdownMenuItem(value: null, child: Text('All Classes', style: TextStyle(fontSize: 12))),
+                    ...classes.map((c) {
+                      final count = counts[c.id] ?? 0;
+                      return DropdownMenuItem(value: c.id, child: Text('${c.className} ($count)', style: const TextStyle(fontSize: 12)));
+                    }),
+                  ],
+                  onChanged: (v) => setState(() {
+                    _classId = v;
+                    _sectionId = null;
+                  }),
+                );
+              })),
+              if (_classId != null) ...[
+                const SizedBox(width: 8),
+                Expanded(child: Consumer(builder: (context, ref, _) {
+                  final sections = ref.watch(sectionsByClassProvider(_classId!)).valueOrNull ?? [];
+                  return DropdownButtonFormField<int>(
+                    isExpanded: true,
+                    value: _sectionId,
+                    hint: const Text('Section', style: TextStyle(fontSize: 12)),
+                    decoration: const InputDecoration(isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8)),
+                    items: [
+                      const DropdownMenuItem(value: null, child: Text('All Sections', style: TextStyle(fontSize: 12))),
+                      ...sections.map((s) => DropdownMenuItem(value: s.id, child: Text(s.sectionName, style: const TextStyle(fontSize: 12)))),
+                    ],
+                    onChanged: (v) => setState(() => _sectionId = v),
+                  );
+                })),
+              ],
+            ]),
           ]),
         ),
         const Divider(height: 1),
