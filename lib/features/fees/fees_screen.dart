@@ -74,7 +74,7 @@ class _State extends ConsumerState<FeesScreen> {
                     label: Text(s.toUpperCase(), style: const TextStyle(fontSize: 11)),
                     selected: _status == s,
                     onSelected: (_) => setState(() => _status = s),
-                    selectedColor: AppTheme.statusColor(s).withOpacity(0.15),
+                    selectedColor: AppTheme.statusColor(s).withValues(alpha: 0.15),
                   ),
                 )).toList(),
               ),
@@ -142,7 +142,7 @@ class _State extends ConsumerState<FeesScreen> {
             color: AppTheme.surface,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(children: [
-              _summStat('Total', records.length.toString(), AppTheme.textPrimary),
+              _summStat('Total', records.length.toString(), Theme.of(context).colorScheme.onSurface),
               _summStat('Paid', records.where((r) => r.status=='paid').length.toString(), AppTheme.paid),
               _summStat('Unpaid', records.where((r) => r.status=='unpaid').length.toString(), AppTheme.unpaid),
               _summStat('Partial', records.where((r) => r.status=='partial').length.toString(), AppTheme.partial),
@@ -170,7 +170,7 @@ class _State extends ConsumerState<FeesScreen> {
   Widget _summStat(String label, String val, Color color) => Expanded(
     child: Column(children: [
       Text(val, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)),
-      Text(label, style: const TextStyle(fontSize: 10, color: AppTheme.textSecondary)),
+      Text(label, style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant)),
     ]),
   );
 
@@ -211,7 +211,7 @@ class _FeeCard extends StatelessWidget {
           child: Row(children: [
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(r.studentName ?? '-', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-              Text('${r.className ?? ''} - ${r.sectionName ?? ''}  |  Reg: ${r.registrationNo ?? ''}', style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+              Text('${r.className ?? ''} - ${r.sectionName ?? ''}  |  Reg: ${r.registrationNo ?? ''}', style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
               const SizedBox(height: 4),
               Row(children: [
                 Text('Total: Rs.${r.finalTotal.toStringAsFixed(0)}', style: const TextStyle(fontSize: 12)),
@@ -227,7 +227,7 @@ class _FeeCard extends StatelessWidget {
             Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
               StatusChip(status: r.status),
               const SizedBox(height: 4),
-              const Icon(Icons.chevron_right, size: 16, color: AppTheme.textSecondary),
+              Icon(Icons.chevron_right, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
             ]),
           ]),
         ),

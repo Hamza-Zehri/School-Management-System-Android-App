@@ -104,7 +104,7 @@ class _TestTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        leading: Container(width: 44, height: 44, decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+        leading: Container(width: 44, height: 44, decoration: BoxDecoration(color: AppTheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
           child: const Icon(Icons.quiz_outlined, color: AppTheme.primary, size: 22)),
         title: Text(test.title ?? '${test.subjectName ?? ''} Test', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
         subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

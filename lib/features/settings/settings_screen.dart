@@ -31,7 +31,7 @@ class SettingsScreen extends ConsumerWidget {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                        color: AppTheme.primary.withOpacity(0.1),
+                        color: AppTheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10)),
                     child: const Icon(Icons.school,
                         color: AppTheme.primary, size: 24)),
@@ -131,7 +131,7 @@ class SettingsScreen extends ConsumerWidget {
               width: 38,
               height: 38,
               decoration: BoxDecoration(
-                  color: AppTheme.primary.withOpacity(0.1),
+                  color: AppTheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8)),
               child: Icon(icon, color: AppTheme.primary, size: 20)),
           title: Text(label,

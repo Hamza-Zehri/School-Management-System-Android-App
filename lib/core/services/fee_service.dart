@@ -22,7 +22,10 @@ class FeeService {
     } else {
       students = await _db.getAllStudents(isActive: true);
     }
-    dev.log('[FeeService] Generating for ${students.length} students month=$month year=$year');
+    dev.log('[FeeService] Initial generation for ${students.length} students month=$month year=$year');
+    // Filter out students with noFee = true
+    students = students.where((s) => s.noFee == false).toList();
+    dev.log('[FeeService] Proceeding with ${students.length} students after excluding No Fee students');
     for (final student in students) {
       final existing = await _db.getFeeRecord(student.id!, month, year);
       if (existing != null) { skipped++; continue; }
@@ -57,8 +60,11 @@ class FeeService {
     String newStatus;
     if (newPaidAmount <= 0) {
       newStatus = 'unpaid';
-    } else if (newDue <= 0) newStatus = 'paid';
-    else newStatus = 'partial';
+    } else if (newDue <= 0) {
+      newStatus = 'paid';
+    } else {
+      newStatus = 'partial';
+    }
 
     final updatedRecord = FeeRecord(
       id: feeRecord.id, studentId: feeRecord.studentId, classId: feeRecord.classId,

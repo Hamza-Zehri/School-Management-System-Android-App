@@ -18,14 +18,14 @@ class FirstLaunchScreen extends StatelessWidget {
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             const Spacer(),
             Container(width: 110, height: 110,
-              decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(28)),
+              decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(28)),
               child: const Icon(Icons.school, size: 64, color: Colors.white)),
             const SizedBox(height: 28),
             const Text('School Manager', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white)),
             const SizedBox(height: 8),
             Text('Complete offline school management\nfor private schools',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 15, color: Colors.white.withOpacity(0.75), height: 1.5)),
+              style: TextStyle(fontSize: 15, color: Colors.white.withValues(alpha: 0.75), height: 1.5)),
             const Spacer(),
             _OptionCard(
               icon: Icons.add_business_outlined,
@@ -42,7 +42,7 @@ class FirstLaunchScreen extends StatelessWidget {
             ),
             const Spacer(),
             Text('Version 1.0.0  •  100% Offline',
-              style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.5))),
+              style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.5))),
             const SizedBox(height: 8),
           ]),
         ),
@@ -76,7 +76,7 @@ class _OptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onTap,
@@ -85,15 +85,15 @@ class _OptionCard extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           child: Row(children: [
             Container(width: 52, height: 52,
-              decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+              decoration: BoxDecoration(color: AppTheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
               child: Icon(icon, color: AppTheme.primary, size: 28)),
             const SizedBox(width: 16),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.textPrimary)),
+              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
               const SizedBox(height: 3),
-              Text(subtitle, style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
+              Text(subtitle, style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             ])),
-            const Icon(Icons.arrow_forward_ios, size: 16, color: AppTheme.textSecondary),
+            Icon(Icons.arrow_forward_ios, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
           ]),
         ),
       ),

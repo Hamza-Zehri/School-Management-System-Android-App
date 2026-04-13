@@ -34,7 +34,7 @@ class SectionStudentsScreen extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 8),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: AppTheme.primary.withOpacity(0.12),
+                    backgroundColor: AppTheme.primary.withValues(alpha: 0.12),
                     child: Text(s.fullName.substring(0, 1).toUpperCase(),
                         style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold)),
                   ),

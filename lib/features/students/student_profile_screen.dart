@@ -44,7 +44,7 @@ class _State extends State<StudentProfileScreen> {
           Card(child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(children: [
-              CircleAvatar(radius: 32, backgroundColor: AppTheme.primary.withOpacity(0.12),
+              CircleAvatar(radius: 32, backgroundColor: AppTheme.primary.withValues(alpha: 0.12),
                 child: Text(s.fullName.substring(0,1).toUpperCase(), style: const TextStyle(fontSize: 24, color: AppTheme.primary, fontWeight: FontWeight.bold))),
               const SizedBox(width: 16),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -67,6 +67,7 @@ class _State extends State<StudentProfileScreen> {
               if (s.guardianPhone2 != null) InfoRow(label: 'Guardian Phone 2', value: s.guardianPhone2!),
               InfoRow(label: 'Gender', value: s.gender),
               if (s.dob != null) InfoRow(label: 'Date of Birth', value: s.dob!),
+              if (s.admissionDate != null) InfoRow(label: 'Date of Admission', value: s.admissionDate!),
               if (s.address != null) InfoRow(label: 'Address', value: s.address!),
             ]),
           )),

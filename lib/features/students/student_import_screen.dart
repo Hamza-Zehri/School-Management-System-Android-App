@@ -45,7 +45,7 @@ class _State extends State<StudentImportScreen> {
           // Info card
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: AppTheme.info.withOpacity(0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.info.withOpacity(0.3))),
+            decoration: BoxDecoration(color: AppTheme.info.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.info.withValues(alpha: 0.3))),
             child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [Icon(Icons.info_outline, color: AppTheme.info, size: 18), SizedBox(width: 8), Text('Required Excel Columns', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.info))]),
               SizedBox(height: 8),
@@ -91,7 +91,7 @@ class _State extends State<StudentImportScreen> {
 
   Widget _actionTile(IconData icon, String title, String subtitle, Color color, VoidCallback onTap) {
     return ListTile(
-      leading: Container(width: 44, height: 44, decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(10)), child: Icon(icon, color: color, size: 22)),
+      leading: Container(width: 44, height: 44, decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)), child: Icon(icon, color: color, size: 22)),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
       subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
       trailing: const Icon(Icons.arrow_forward_ios, size: 14),

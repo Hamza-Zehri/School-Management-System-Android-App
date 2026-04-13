@@ -73,7 +73,7 @@ class _StaffTab extends ConsumerWidget {
         child: TextField(
           decoration: InputDecoration(
             hintText: 'Search by name or employee ID...',
-            prefixIcon: const Icon(Icons.search, color: AppTheme.textSecondary),
+            prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.onSurfaceVariant),
             suffixIcon: search.isNotEmpty ? IconButton(icon: const Icon(Icons.clear), onPressed: () => onSearchChanged('')) : null,
           ),
           onChanged: onSearchChanged,
@@ -126,13 +126,13 @@ class _EmpTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppTheme.primary.withOpacity(0.12),
+          backgroundColor: AppTheme.primary.withValues(alpha: 0.12),
           child: Text(emp.fullName.substring(0,1).toUpperCase(), style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold)),
         ),
         title: Text(emp.fullName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
         subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('${emp.designation} • ${emp.employeeId}', style: const TextStyle(fontSize: 12)),
-          Text('Rs. ${emp.salary.toStringAsFixed(0)}/month • ${emp.phone}', style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+          Text('Rs. ${emp.salary.toStringAsFixed(0)}/month • ${emp.phone}', style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ]),
         trailing: Row(mainAxisSize: MainAxisSize.min, children: [
           if (!emp.isActive) const StatusChip(status: 'inactive'),
@@ -148,7 +148,7 @@ class _EmpTile extends StatelessWidget {
             icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
             onPressed: () => _confirmDelete(context),
           ),
-          const Icon(Icons.chevron_right, color: AppTheme.textSecondary),
+          Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant),
         ]),
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => EmployeeDetailScreen(employeeId: emp.id!))).then((_) => onRefresh()),
       ),

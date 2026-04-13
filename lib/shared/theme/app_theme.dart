@@ -32,6 +32,7 @@ class AppTheme {
       secondary: accent,
       surface: isDark ? const Color(0xFF0F172A) : surface,
       onSurface: isDark ? Colors.white : textPrimary,
+      onSurfaceVariant: isDark ? Colors.white70 : textSecondary,
     );
 
     return ThemeData(
@@ -137,14 +138,14 @@ class AppTheme {
             GoogleFonts.inter(fontSize: 11),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: isDark ? Colors.white10 : Colors.black.withOpacity(0.04),
+        backgroundColor: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.04),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20)),
         padding:
             const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         labelStyle: GoogleFonts.inter(fontSize: 12, color: isDark ? Colors.white : textPrimary),
         secondarySelectedColor: primary,
-        selectedColor: primary.withOpacity(0.2),
+        selectedColor: primary.withValues(alpha: 0.2),
       ),
       dividerTheme: DividerThemeData(
         color: isDark ? Colors.white10 : border,
@@ -179,6 +180,8 @@ class AppTheme {
         return warning;
       case 'leave':
         return info;
+      case 'no fee':
+        return Colors.orange;
       default:
         return textSecondary;
     }

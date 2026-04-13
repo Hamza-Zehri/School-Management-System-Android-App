@@ -68,7 +68,9 @@ class _State extends State<FeePaymentScreen> {
       if (updated != null) {
         setState(() => _record = updated);
         await _loadPayments();
-        if (mounted) showSnack(context, 'Payment deleted');
+        if (mounted) {
+          showSnack(context, 'Payment deleted');
+        }
       }
     }
   }
@@ -106,7 +108,9 @@ class _State extends State<FeePaymentScreen> {
       );
       if (updated != null) {
         setState(() => _record = updated);
-        if (mounted) showSnack(context, 'Fee record updated');
+        if (mounted) {
+          showSnack(context, 'Fee record updated');
+        }
       }
     }
   }

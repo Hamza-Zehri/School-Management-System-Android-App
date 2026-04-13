@@ -77,12 +77,12 @@ class _SplashScreen extends StatelessWidget {
       backgroundColor: AppTheme.primary,
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Container(width: 100, height: 100, decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(24)),
+          Container(width: 100, height: 100, decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(24)),
             child: const Icon(Icons.school, size: 56, color: Colors.white)),
           const SizedBox(height: 24),
           const Text('School Manager', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white)),
           const SizedBox(height: 8),
-          Text('Offline • Secure • Reliable', style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.7))),
+          Text('Offline • Secure • Reliable', style: TextStyle(fontSize: 14, color: Colors.white.withValues(alpha: 0.7))),
           const SizedBox(height: 48),
           const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
         ]),

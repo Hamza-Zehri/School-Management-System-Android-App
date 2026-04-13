@@ -21,6 +21,7 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
   int? _filterClassId;
   int? _filterSectionId;
   bool? _filterActive = true;
+  bool _filterNoFee = false;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search by name, reg no, father name...',
-                prefixIcon: const Icon(Icons.search, color: AppTheme.textSecondary),
+                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 suffixIcon: _search.isNotEmpty
                     ? IconButton(icon: const Icon(Icons.clear), onPressed: () => setState(() => _search = ''))
                     : null,
@@ -67,6 +68,9 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
                 const SizedBox(width: 8),
                 FilterChip(label: const Text('All'), selected: _filterActive == null,
                     onSelected: (_) => setState(() => _filterActive = null)),
+                const SizedBox(width: 8),
+                FilterChip(label: const Text('No Fee'), selected: _filterNoFee,
+                    onSelected: (v) => setState(() => _filterNoFee = v)),
                 if (_filterClassId != null) ...[
                   const SizedBox(width: 8),
                   ActionChip(
@@ -100,7 +104,7 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
         return ref.watch(studentsByClassSectionProvider(key)).when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => Center(child: Text('Error: $e')),
-          data: (s) => _buildList(_filterActive != null ? s.where((x) => x.isActive == _filterActive).toList() : s),
+          data: (s) => _buildList(s),
         );
       } else {
         return FutureBuilder<List<Student>>(
@@ -115,20 +119,24 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
     return ref.watch(allStudentsProvider).when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(child: Text('Error: $e')),
-      data: (s) => _buildList(_filterActive != null ? s.where((x) => x.isActive == _filterActive).toList() : s),
+      data: (s) => _buildList(s),
     );
   }
 
   Widget _buildList(List<Student> students) {
-    if (students.isEmpty) return const EmptyState(message: 'No students found', icon: Icons.people_outline);
+    var list = students;
+    if (_filterActive != null) list = list.where((s) => s.isActive == _filterActive).toList();
+    if (_filterNoFee) list = list.where((s) => s.noFee).toList();
+
+    if (list.isEmpty) return const EmptyState(message: 'No students found', icon: Icons.people_outline);
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
-      itemCount: students.length,
-      itemBuilder: (ctx, i) => _StudentTile(student: students[i], onRefresh: () { 
+      itemCount: list.length,
+      itemBuilder: (ctx, i) => _StudentTile(student: list[i], onRefresh: () { 
         ref.invalidate(allStudentsProvider); 
         ref.invalidate(classStudentCountsProvider);
         ref.invalidate(sectionStudentCountsProvider);
-        setState(() {}); 
+        if (mounted) setState(() {}); 
       }),
     );
   }
@@ -158,17 +166,18 @@ class _StudentTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppTheme.primary.withOpacity(0.12),
+          backgroundColor: AppTheme.primary.withValues(alpha: 0.12),
           child: Text(student.fullName.substring(0, 1).toUpperCase(),
               style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold)),
         ),
         title: Text(student.fullName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
         subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('${student.className ?? '-'} - ${student.sectionName ?? '-'}', style: const TextStyle(fontSize: 12)),
-          Text('Reg: ${student.registrationNo}', style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+          Text('Reg: ${student.registrationNo}', style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ]),
         trailing: Row(mainAxisSize: MainAxisSize.min, children: [
           if (!student.isActive) const StatusChip(status: 'inactive'),
+          if (student.noFee) const Padding(padding: EdgeInsets.only(left: 4), child: StatusChip(status: 'No Fee')),
           const SizedBox(width: 4),
           IconButton(
             icon: const Icon(Icons.edit_outlined, color: AppTheme.primary, size: 20),
@@ -181,7 +190,7 @@ class _StudentTile extends StatelessWidget {
             icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
             onPressed: () => _confirmDelete(context),
           ),
-          const Icon(Icons.chevron_right, color: AppTheme.textSecondary),
+          Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant),
         ]),
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => StudentProfileScreen(studentId: student.id!))).then((_) => onRefresh()),
       ),

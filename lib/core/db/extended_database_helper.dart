@@ -24,7 +24,7 @@ class ExtendedDatabaseHelper {
     final path = join(dbPath, filePath);
     return await openDatabase(
       path,
-      version: 2, // bumped from 1 → 2
+      version: 4, // bumped from 3 → 4
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
       onConfigure: (db) async => await db.execute('PRAGMA foreign_keys = ON'),
@@ -32,7 +32,7 @@ class ExtendedDatabaseHelper {
   }
 
   // ============================================================
-  // CREATE — all tables (v1 original + v2 new)
+  // CREATE — all tables (v1 original + v2 new + v3 additions)
   // ============================================================
   Future _createDB(Database db, int version) async {
     await _createOriginalTables(db);
@@ -42,15 +42,31 @@ class ExtendedDatabaseHelper {
   }
 
   // ============================================================
-  // UPGRADE — only adds new tables, never drops existing
+  // UPGRADE — handles schema modifications safely
   // ============================================================
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
-      dev.log('[DB] Migrating from v$oldVersion → v$newVersion: adding new tables');
+      dev.log('[DB] Migrating from v$oldVersion → v$newVersion: adding v2 tables');
       await _createExtendedTables(db);
       await _seedNewSmsTemplates(db);
-      dev.log('[DB] Migration complete');
     }
+    if (oldVersion < 3) {
+      dev.log('[DB] Migrating from v$oldVersion → v3: adding admission_date to students');
+      try {
+        await db.execute('ALTER TABLE students ADD COLUMN admission_date TEXT');
+      } catch (e) {
+        dev.log('[DB] Migration error (admission_date): $e');
+      }
+    }
+    if (oldVersion < 4) {
+      dev.log('[DB] Migrating from v$oldVersion → v4: adding no_fee to students');
+      try {
+        await db.execute('ALTER TABLE students ADD COLUMN no_fee INTEGER DEFAULT 0');
+      } catch (e) {
+        dev.log('[DB] Migration error (no_fee): $e');
+      }
+    }
+    dev.log('[DB] Migration complete');
   }
 
   // ============================================================
@@ -76,7 +92,7 @@ class ExtendedDatabaseHelper {
       roll_no TEXT NOT NULL, full_name TEXT NOT NULL, father_name TEXT NOT NULL,
       guardian_name TEXT NOT NULL, guardian_phone TEXT NOT NULL,
       guardian_phone_2 TEXT, class_id INTEGER NOT NULL, section_id INTEGER NOT NULL,
-      gender TEXT DEFAULT 'Male', dob TEXT, address TEXT, is_active INTEGER DEFAULT 1,
+      gender TEXT DEFAULT 'Male', dob TEXT, admission_date TEXT, address TEXT, is_active INTEGER DEFAULT 1, no_fee INTEGER DEFAULT 0,
       FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
       FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE CASCADE)''');
 
@@ -375,7 +391,7 @@ class ExtendedDatabaseHelper {
       SELECT
         s.id, s.registration_no, s.roll_no, s.full_name, s.father_name,
         s.guardian_name, s.guardian_phone, s.guardian_phone_2,
-        s.class_id, s.section_id, s.gender, s.dob, s.address, s.is_active,
+        s.class_id, s.section_id, s.gender, s.dob, s.admission_date, s.address, s.is_active,
         c.class_name, sec.section_name
       FROM students s
       INNER JOIN classes c ON s.class_id = c.id

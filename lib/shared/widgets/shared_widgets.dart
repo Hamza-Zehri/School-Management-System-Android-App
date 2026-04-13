@@ -30,7 +30,7 @@ class StatCard extends StatelessWidget {
           border: Border.all(color: AppTheme.border),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.08),
+              color: color.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -46,14 +46,14 @@ class StatCard extends StatelessWidget {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.12),
+                    color: color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(icon, color: color, size: 20),
                 ),
                 if (onTap != null)
-                  const Icon(Icons.arrow_forward_ios,
-                      size: 12, color: AppTheme.textSecondary),
+                   Icon(Icons.arrow_forward_ios,
+                      size: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
               ],
             ),
             const SizedBox(height: 10),
@@ -67,8 +67,8 @@ class StatCard extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(label,
-                style: const TextStyle(
-                    fontSize: 12, color: AppTheme.textSecondary)),
+                style: TextStyle(
+                    fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ],
         ),
       ),
@@ -99,10 +99,10 @@ class SectionHeader extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Text(title,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: AppTheme.textPrimary)),
+                  color: Theme.of(context).colorScheme.onSurface)),
           const Spacer(),
           if (action != null) action!,
         ],
@@ -134,13 +134,13 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 64, color: AppTheme.textSecondary.withOpacity(0.4)),
+            Icon(icon, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4)),
             const SizedBox(height: 16),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                  fontSize: 15, color: AppTheme.textSecondary),
+              style: TextStyle(
+                  fontSize: 15, color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             if (actionLabel != null && onAction != null) ...[
               const SizedBox(height: 16),
@@ -165,9 +165,9 @@ class StatusChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         status.toUpperCase(),
@@ -205,7 +205,7 @@ class LoadingOverlay extends StatelessWidget {
               if (message != null) ...[
                 const SizedBox(height: 14),
                 Text(message!,
-                    style: const TextStyle(color: AppTheme.textPrimary)),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
               ],
             ],
           ),
@@ -276,15 +276,15 @@ class InfoRow extends StatelessWidget {
           SizedBox(
             width: 140,
             child: Text(label,
-                style: const TextStyle(
-                    fontSize: 13, color: AppTheme.textSecondary)),
+                style: TextStyle(
+                    fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ),
           Expanded(
             child: Text(value,
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
-                    color: AppTheme.textPrimary)),
+                    color: Theme.of(context).colorScheme.onSurface)),
           ),
         ],
       ),

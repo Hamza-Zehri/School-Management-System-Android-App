@@ -94,11 +94,11 @@ class _State extends State<EmployeeAttendanceHistoryScreen> {
                     return Card(
                       margin: const EdgeInsets.only(bottom: 6),
                       child: ListTile(
-                        leading: Container(width: 40, height: 40, decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+                        leading: Container(width: 40, height: 40, decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
                           child: Icon(a.status == 'Present' ? Icons.check_circle_outline : a.status == 'Absent' ? Icons.cancel_outlined : Icons.event_note_outlined, color: color, size: 20)),
                         title: Text(a.attendanceDate, style: const TextStyle(fontWeight: FontWeight.w500)),
                         subtitle: a.remarks != null ? Text(a.remarks!) : null,
-                        trailing: Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3), decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(12)),
+                        trailing: Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3), decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(12)),
                           child: Text(a.status, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color))),
                       ),
                     );

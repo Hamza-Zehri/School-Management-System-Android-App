@@ -12,7 +12,7 @@ class MarksScreen extends ConsumerStatefulWidget {
   ConsumerState<MarksScreen> createState() => _State();
 }
 class _State extends ConsumerState<MarksScreen> {
-  int? _classId, _examId;
+  int? _classId;
   List<SchoolClass> _classes = [];
 
   @override
@@ -37,7 +37,7 @@ class _State extends ConsumerState<MarksScreen> {
             Expanded(child: DropdownButtonFormField<int>(
               initialValue: _classId, hint: const Text('Select Class'), decoration: const InputDecoration(labelText: 'Class', isDense: true),
               items: _classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.className))).toList(),
-              onChanged: (v) => setState(() { _classId = v; _examId = null; }),
+              onChanged: (v) => setState(() { _classId = v; }),
             )),
           ]),
         ),

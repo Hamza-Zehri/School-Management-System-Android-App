@@ -23,9 +23,10 @@ class _State extends ConsumerState<AddEditStudentScreen> {
   final _ph2 = TextEditingController(); // phone2
   final _addr = TextEditingController();
   final _dob = TextEditingController();
+  final _adm = TextEditingController(); // admission date
   int? _cid, _sid;
   String _gender = 'Male';
-  bool _active = true, _saving = false;
+  bool _active = true, _noFee = false, _saving = false;
   List<SchoolClass> _classes = [];
   List<Section> _sections = [];
 
@@ -38,8 +39,9 @@ class _State extends ConsumerState<AddEditStudentScreen> {
       _r.text = s.registrationNo; _rn.text = s.rollNo; _n.text = s.fullName;
       _fn.text = s.fatherName; _gn.text = s.guardianName; _ph.text = s.guardianPhone;
       _ph2.text = s.guardianPhone2 ?? ''; _addr.text = s.address ?? '';
-      _dob.text = s.dob ?? ''; _cid = s.classId; _sid = s.sectionId;
-      _gender = s.gender; _active = s.isActive;
+      _dob.text = s.dob ?? ''; _adm.text = s.admissionDate ?? '';
+      _cid = s.classId; _sid = s.sectionId;
+      _gender = s.gender; _active = s.isActive; _noFee = s.noFee;
     }
   }
 
@@ -70,7 +72,8 @@ class _State extends ConsumerState<AddEditStudentScreen> {
       guardianPhone: _ph.text.trim(), guardianPhone2: _ph2.text.trim().isEmpty ? null : _ph2.text.trim(),
       classId: _cid!, sectionId: _sid!, gender: _gender,
       dob: _dob.text.trim().isEmpty ? null : _dob.text.trim(),
-      address: _addr.text.trim().isEmpty ? null : _addr.text.trim(), isActive: _active,
+      admissionDate: _adm.text.trim().isEmpty ? null : _adm.text.trim(),
+      address: _addr.text.trim().isEmpty ? null : _addr.text.trim(), isActive: _active, noFee: _noFee,
     );
     try {
       if (widget.student == null) { 
@@ -89,7 +92,7 @@ class _State extends ConsumerState<AddEditStudentScreen> {
   }
 
   @override
-  void dispose() { for (final c in [_r,_rn,_n,_fn,_gn,_ph,_ph2,_addr,_dob]) {
+  void dispose() { for (final c in [_r,_rn,_n,_fn,_gn,_ph,_ph2,_addr,_dob,_adm]) {
     c.dispose();
   } super.dispose(); }
 
@@ -136,10 +139,20 @@ class _State extends ConsumerState<AddEditStudentScreen> {
             },
             decoration: const InputDecoration(labelText: 'Date of Birth', suffixIcon: Icon(Icons.calendar_today_outlined)),
           ),
+          _g(),
+          TextFormField(
+            controller: _adm, readOnly: true, onTap: () async {
+              final d = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2000), lastDate: DateTime.now());
+              if (d != null) _adm.text = d.toIso8601String().substring(0, 10);
+            },
+            decoration: const InputDecoration(labelText: 'Date of Admission', suffixIcon: Icon(Icons.calendar_today_outlined)),
+          ),
           _g(), _tf('Address', _addr, maxLines: 2),
+          _g(), _sec('Status & Fees'),
+          SwitchListTile(title: const Text('Active Student'), value: _active, onChanged: (v) => setState(() => _active = v), activeThumbColor: AppTheme.primary),
+          SwitchListTile(title: const Text('No Fee Student'), value: _noFee, onChanged: (v) => setState(() => _noFee = v), activeThumbColor: AppTheme.primary),
           if (widget.student != null) ...[
-            _g(), _sec('Status'),
-            SwitchListTile(title: const Text('Active Student'), value: _active, onChanged: (v) => setState(() => _active = v), activeThumbColor: AppTheme.primary),
+            // Status was already shown above, moved it for better grouping
           ],
           const SizedBox(height: 16),
           SizedBox(width: double.infinity, height: 52,

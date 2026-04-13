@@ -100,7 +100,7 @@ class _LockScreenState extends State<LockScreen> {
             const SizedBox(height: 20),
             const Text('App Locked', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            const Text('Enter 4-digit PIN to continue', style: TextStyle(color: AppTheme.textSecondary)),
+            Text('Enter 4-digit PIN to continue', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
             const SizedBox(height: 40),
             
             // PIN Dots
@@ -111,7 +111,7 @@ class _LockScreenState extends State<LockScreen> {
                 width: 16, height: 16,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: i < _enteredPin.length ? AppTheme.primary : AppTheme.primary.withOpacity(0.2),
+                  color: i < _enteredPin.length ? AppTheme.primary : AppTheme.primary.withValues(alpha: 0.2),
                 ),
               )),
             ),
@@ -128,9 +128,9 @@ class _LockScreenState extends State<LockScreen> {
             TextButton(onPressed: _forgotPin, child: const Text('Forgot PIN?', style: TextStyle(fontSize: 13))),
             
             // Footer Credit
-            const Padding(
-              padding: EdgeInsets.only(bottom: 20, top: 10),
-              child: Text('Developed by Engr. Hamza Asad', style: TextStyle(fontSize: 10, color: AppTheme.textSecondary)),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20, top: 10),
+              child: Text('Developed by Engr. Hamza Asad', style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             ),
           ],
         ),
@@ -154,7 +154,7 @@ class _LockScreenState extends State<LockScreen> {
             _buildKey('0'),
             SizedBox(
               width: 60,
-              child: IconButton(onPressed: _onBackspace, icon: const Icon(Icons.backspace_outlined, color: AppTheme.textSecondary)),
+              child: IconButton(onPressed: _onBackspace, icon: Icon(Icons.backspace_outlined, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             ),
           ]),
         ],
@@ -171,7 +171,7 @@ class _LockScreenState extends State<LockScreen> {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: AppTheme.primary.withOpacity(0.1)),
+          border: Border.all(color: AppTheme.primary.withValues(alpha: 0.1)),
         ),
         child: Text(label, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500)),
       ),

@@ -40,7 +40,7 @@ class _State extends ConsumerState<SalaryScreen> {
 
     return Column(children: [
       Container(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
         child: Column(children: [
           Row(children: [
@@ -159,8 +159,8 @@ class _SalaryCard extends StatelessWidget {
                       style:
                           const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                   Text('${r.designation ?? ''} • ${r.employeePhone ?? ''}',
-                      style: const TextStyle(
-                          fontSize: 11, color: AppTheme.textSecondary)),
+                      style: TextStyle(
+                          fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   const SizedBox(height: 4),
                   Row(children: [
                     Text('Total: Rs.${r.totalPayable.toStringAsFixed(0)}',
@@ -183,7 +183,7 @@ class _SalaryCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.12),
+                      color: statusColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12)),
                   child: Text(r.status,
                       style: TextStyle(
@@ -344,11 +344,12 @@ class _SalaryPaymentHistoryState extends State<_SalaryPaymentHistory> {
   Future<void> _load() async {
     final p = await ExtendedDatabaseHelper.instance
         .getSalaryPaymentsByRecord(widget.record.id!);
-    if (mounted)
+    if (mounted) {
       setState(() {
         _payments = p;
         _loading = false;
       });
+    }
   }
 
   @override

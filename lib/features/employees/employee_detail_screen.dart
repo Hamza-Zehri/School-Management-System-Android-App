@@ -41,7 +41,7 @@ class _State extends State<EmployeeDetailScreen> {
           Card(child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(children: [
-              CircleAvatar(radius: 30, backgroundColor: AppTheme.primary.withOpacity(0.12),
+              CircleAvatar(radius: 30, backgroundColor: AppTheme.primary.withValues(alpha: 0.12),
                 child: Text(e.fullName.substring(0,1).toUpperCase(), style: const TextStyle(fontSize: 22, color: AppTheme.primary, fontWeight: FontWeight.bold))),
               const SizedBox(width: 16),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

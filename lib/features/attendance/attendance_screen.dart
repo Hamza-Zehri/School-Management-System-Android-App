@@ -80,7 +80,7 @@ class _State extends ConsumerState<AttendanceScreen> {
       body: Column(children: [
         // Filter row
         Container(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           padding: const EdgeInsets.all(12),
           child: Column(children: [
             Row(children: [
@@ -138,7 +138,7 @@ class _State extends ConsumerState<AttendanceScreen> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       child: Row(children: [
-                        CircleAvatar(radius: 16, backgroundColor: AppTheme.primary.withOpacity(0.1),
+                        CircleAvatar(radius: 16, backgroundColor: AppTheme.primary.withValues(alpha: 0.1),
                           child: Text(s.fullName.substring(0,1), style: const TextStyle(color: AppTheme.primary, fontSize: 12, fontWeight: FontWeight.bold))),
                         const SizedBox(width: 10),
                         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -155,7 +155,7 @@ class _State extends ConsumerState<AttendanceScreen> {
         // Bottom bar
         if (_students.isNotEmpty)
           Container(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             padding: const EdgeInsets.all(12),
             child: Column(children: [
               Row(children: [
@@ -179,17 +179,19 @@ class _State extends ConsumerState<AttendanceScreen> {
   }
 
   Widget _quickBtn(String label, String status, Color color) => OutlinedButton(
-    onPressed: () => setState(() { for (final s in _students) {
-      _statusMap[s.id!] = status;
-    } }),
+    onPressed: () => setState(() {
+      for (final s in _students) {
+        _statusMap[s.id!] = status;
+      }
+    }),
     style: OutlinedButton.styleFrom(foregroundColor: color, side: BorderSide(color: color), padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
     child: Text(label, style: const TextStyle(fontSize: 11)),
   );
 
   Widget _statusToggle(int studentId, String status) {
-    const statuses = ['present', 'absent', 'late', 'leave'];
-    const colors = [AppTheme.accent, AppTheme.danger, AppTheme.warning, AppTheme.info];
+    const statuses = ['present', 'absent', 'late'];
     return SegmentedButton<String>(
+      showSelectedIcon: false,
       segments: statuses.asMap().entries.map((e) => ButtonSegment<String>(
         value: e.value,
         label: Text(e.value[0].toUpperCase(), style: const TextStyle(fontSize: 10)),
@@ -197,8 +199,11 @@ class _State extends ConsumerState<AttendanceScreen> {
       selected: {status},
       onSelectionChanged: (s) => setState(() => _statusMap[studentId] = s.first),
       style: ButtonStyle(
+        visualDensity: VisualDensity.compact,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         textStyle: WidgetStateProperty.all(const TextStyle(fontSize: 10)),
-        minimumSize: WidgetStateProperty.all(const Size(28, 28)),
+        minimumSize: WidgetStateProperty.all(const Size(32, 32)),
+        padding: WidgetStateProperty.all(EdgeInsets.zero),
       ),
     );
   }

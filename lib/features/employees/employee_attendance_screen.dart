@@ -93,7 +93,7 @@ class _State extends ConsumerState<EmployeeAttendanceScreen> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       child: Row(children: [
-                        CircleAvatar(radius: 16, backgroundColor: AppTheme.primary.withOpacity(0.1),
+                        CircleAvatar(radius: 16, backgroundColor: AppTheme.primary.withValues(alpha: 0.1),
                           child: Text(e.fullName.substring(0,1), style: const TextStyle(color: AppTheme.primary, fontSize: 12))),
                         const SizedBox(width: 10),
                         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

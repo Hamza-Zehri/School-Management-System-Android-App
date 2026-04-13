@@ -83,7 +83,7 @@ class DashboardScreen extends ConsumerWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const Text('Welcome Back! 👋', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
-              Text('Today: ${_todayFormatted()}', style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 13)),
+              Text('Today: ${_todayFormatted()}', style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 13)),
             ]),
           ),
           const SizedBox(height: 20),
@@ -172,9 +172,9 @@ class _QuickActionsGrid extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppTheme.border)),
             child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Container(width: 44, height: 44, decoration: BoxDecoration(color: a.color.withOpacity(0.12), borderRadius: BorderRadius.circular(10)), child: Icon(a.icon, color: a.color, size: 24)),
+              Container(width: 44, height: 44, decoration: BoxDecoration(color: a.color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)), child: Icon(a.icon, color: a.color, size: 24)),
               const SizedBox(height: 6),
-              Text(a.label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppTheme.textPrimary)),
+              Text(a.label, textAlign: TextAlign.center, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onSurface)),
             ]),
           ),
         );
@@ -209,7 +209,7 @@ class _AppDrawer extends StatelessWidget {
         _tile(context, 'Marks & Exams', Icons.grade_outlined, const MarksScreen()),
         _tile(context, 'Daily Tests', Icons.quiz_outlined, const TestHistoryScreen()),
         const Divider(),
-        const Padding(padding: EdgeInsets.fromLTRB(16, 8, 0, 4), child: Text('EMPLOYEES', style: TextStyle(fontSize: 11, color: AppTheme.textSecondary, fontWeight: FontWeight.w600))),
+        Padding(padding: const EdgeInsets.fromLTRB(16, 8, 0, 4), child: Text('EMPLOYEES', style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600))),
         _tile(context, 'Employee Management', Icons.badge_outlined, const EmployeesScreen()),
         const Divider(),
         _tile(context, 'Send SMS', Icons.sms_outlined, const SmsScreen()),
@@ -221,7 +221,7 @@ class _AppDrawer extends StatelessWidget {
 
   Widget _tile(BuildContext context, String label, IconData icon, Widget screen) => ListTile(
     leading: Icon(icon, color: AppTheme.primary, size: 22),
-    title: Text(label, style: const TextStyle(fontSize: 14, color: AppTheme.textPrimary)),
+    title: Text(label, style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface)),
     onTap: () { Navigator.pop(context); Navigator.push(context, MaterialPageRoute(builder: (_) => screen)); },
     dense: true,
   );

@@ -22,7 +22,6 @@ class TestResultScreen extends ConsumerWidget {
           if (marks.isEmpty) return const EmptyState(message: 'No marks recorded', icon: Icons.grade_outlined);
           // Summary stats
           final totalObtained = marks.fold<double>(0, (s, m) => s + m.obtainedMarks);
-          final totalMax = marks.fold<double>(0, (s, m) => s + m.totalMarks);
           final avg = marks.isNotEmpty ? totalObtained / marks.length : 0;
           final highest = marks.reduce((a, b) => a.obtainedMarks > b.obtainedMarks ? a : b);
           final lowest = marks.reduce((a, b) => a.obtainedMarks < b.obtainedMarks ? a : b);
@@ -30,7 +29,7 @@ class TestResultScreen extends ConsumerWidget {
           return Column(children: [
             // Header
             Container(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               padding: const EdgeInsets.all(12),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 InfoRow(label: 'Subject', value: test.subjectName ?? '-'),
@@ -39,9 +38,9 @@ class TestResultScreen extends ConsumerWidget {
                 InfoRow(label: 'Students', value: '${marks.length}'),
                 const Divider(height: 16),
                 Row(children: [
-                  _stat('Avg Score', avg.toStringAsFixed(1), AppTheme.primary),
-                  _stat('Highest', highest.obtainedMarks.toStringAsFixed(0), AppTheme.accent),
-                  _stat('Lowest', lowest.obtainedMarks.toStringAsFixed(0), AppTheme.danger),
+                  _stat(context, 'Avg Score', avg.toStringAsFixed(1), AppTheme.primary),
+                  _stat(context, 'Highest', highest.obtainedMarks.toStringAsFixed(0), AppTheme.accent),
+                  _stat(context, 'Lowest', lowest.obtainedMarks.toStringAsFixed(0), AppTheme.danger),
                 ]),
               ]),
             ),
@@ -59,20 +58,20 @@ class TestResultScreen extends ConsumerWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: Row(children: [
-                      CircleAvatar(radius: 14, backgroundColor: AppTheme.primary.withOpacity(0.1),
+                      CircleAvatar(radius: 14, backgroundColor: AppTheme.primary.withValues(alpha: 0.1),
                         child: Text(m.rollNo ?? '${i+1}', style: const TextStyle(fontSize: 10, color: AppTheme.primary, fontWeight: FontWeight.bold))),
                       const SizedBox(width: 10),
                       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text(m.studentName ?? '-', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-                        if (m.remarks != null) Text(m.remarks!, style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+                        if (m.remarks != null) Text(m.remarks!, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                       ])),
                       Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                         Text('${m.obtainedMarks.toStringAsFixed(0)}/${m.totalMarks.toStringAsFixed(0)}',
                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                        Text('${m.percentage.toStringAsFixed(1)}%', style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+                        Text('${m.percentage.toStringAsFixed(1)}%', style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                       ]),
                       const SizedBox(width: 8),
-                      Container(width: 32, height: 32, decoration: BoxDecoration(color: gradeColor.withOpacity(0.12), borderRadius: BorderRadius.circular(6)),
+                      Container(width: 32, height: 32, decoration: BoxDecoration(color: gradeColor.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
                         child: Center(child: Text(m.grade, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: gradeColor)))),
                     ]),
                   ),
@@ -85,8 +84,8 @@ class TestResultScreen extends ConsumerWidget {
     );
   }
 
-  Widget _stat(String label, String val, Color color) => Expanded(child: Column(children: [
+  Widget _stat(BuildContext context, String label, String val, Color color) => Expanded(child: Column(children: [
     Text(val, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color)),
-    Text(label, style: const TextStyle(fontSize: 10, color: AppTheme.textSecondary)),
+    Text(label, style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant)),
   ]));
 }

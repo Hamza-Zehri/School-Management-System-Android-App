@@ -46,7 +46,7 @@ class _State extends State<BackupRestoreScreen> {
         // Info banner
         Container(
           padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(color: AppTheme.warning.withOpacity(0.1), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.warning.withOpacity(0.3))),
+          decoration: BoxDecoration(color: AppTheme.warning.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.warning.withValues(alpha: 0.3))),
           child: const Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Icon(Icons.info_outline, color: AppTheme.warning, size: 18),
             SizedBox(width: 8),
@@ -79,7 +79,7 @@ class _State extends State<BackupRestoreScreen> {
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: AppTheme.danger.withOpacity(0.07), borderRadius: BorderRadius.circular(8)),
+              decoration: BoxDecoration(color: AppTheme.danger.withValues(alpha: 0.07), borderRadius: BorderRadius.circular(8)),
               child: const Row(children: [
                 Icon(Icons.warning_amber_outlined, color: AppTheme.danger, size: 16),
                 SizedBox(width: 6),

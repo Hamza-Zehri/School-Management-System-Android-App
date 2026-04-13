@@ -117,8 +117,10 @@ class Student {
   final int sectionId;
   final String gender;
   final String? dob;
+  final String? admissionDate;
   final String? address;
   final bool isActive;
+  final bool noFee;
 
   // Joined fields (not stored in DB)
   String? className;
@@ -137,8 +139,10 @@ class Student {
     required this.sectionId,
     required this.gender,
     this.dob,
+    this.admissionDate,
     this.address,
     this.isActive = true,
+    this.noFee = false,
     this.className,
     this.sectionName,
   });
@@ -156,8 +160,10 @@ class Student {
         sectionId: map['section_id'],
         gender: map['gender'] ?? 'Male',
         dob: map['dob'],
+        admissionDate: map['admission_date'],
         address: map['address'],
         isActive: (map['is_active'] ?? 1) == 1,
+        noFee: (map['no_fee'] ?? 0) == 1,
         className: map['class_name'],
         sectionName: map['section_name'],
       );
@@ -175,8 +181,10 @@ class Student {
         'section_id': sectionId,
         'gender': gender,
         'dob': dob,
+        'admission_date': admissionDate,
         'address': address,
         'is_active': isActive ? 1 : 0,
+        'no_fee': noFee ? 1 : 0,
       };
 
   Student copyWith({
@@ -192,8 +200,10 @@ class Student {
     int? sectionId,
     String? gender,
     String? dob,
+    String? admissionDate,
     String? address,
     bool? isActive,
+    bool? noFee,
   }) =>
       Student(
         id: id ?? this.id,
@@ -208,8 +218,10 @@ class Student {
         sectionId: sectionId ?? this.sectionId,
         gender: gender ?? this.gender,
         dob: dob ?? this.dob,
+        admissionDate: admissionDate ?? this.admissionDate,
         address: address ?? this.address,
         isActive: isActive ?? this.isActive,
+        noFee: noFee ?? this.noFee,
       );
 }
 

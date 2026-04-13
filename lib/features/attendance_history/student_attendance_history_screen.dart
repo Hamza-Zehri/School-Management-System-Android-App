@@ -55,7 +55,7 @@ class _State extends State<StudentAttendanceHistoryScreen> {
     }
   }
 
-  List<Student> get _filteredStudents => _search.isEmpty ? _students : _students.where((s) => s.fullName.toLowerCase().contains(_search.toLowerCase()) || s.registrationNo.contains(_search)).toList();
+  // Removed unused _filteredStudents getter since it's replaced locally in StatefulBuilder
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +108,7 @@ class _State extends State<StudentAttendanceHistoryScreen> {
                     return Card(
                       margin: const EdgeInsets.only(bottom: 6),
                       child: ListTile(
-                        leading: Container(width: 40, height: 40, decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+                        leading: Container(width: 40, height: 40, decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
                           child: Icon(_statusIcon(a.status), color: color, size: 20)),
                         title: Text(a.attendanceDate, style: const TextStyle(fontWeight: FontWeight.w500)),
                         subtitle: a.remarks != null ? Text(a.remarks!) : null,

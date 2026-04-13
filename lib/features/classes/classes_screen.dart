@@ -115,7 +115,7 @@ class _ClassCard extends ConsumerWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: AppTheme.primary.withOpacity(0.1),
+            color: AppTheme.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Icon(Icons.class_outlined,
@@ -271,8 +271,8 @@ class _SectionsList extends ConsumerWidget {
                           builder: (_) => SectionStudentsScreen(cls: cls, section: s))),
                   onDeleted: () => _deleteSection(context, s, ref),
                   deleteIcon: const Icon(Icons.close, size: 14),
-                  backgroundColor: AppTheme.primary.withOpacity(0.08),
-                  side: BorderSide(color: AppTheme.primary.withOpacity(0.2)),
+                  backgroundColor: AppTheme.primary.withValues(alpha: 0.08),
+                  side: BorderSide(color: AppTheme.primary.withValues(alpha: 0.2)),
                   labelStyle: const TextStyle(fontSize: 12, color: AppTheme.primary),
                 );
               })).toList(),

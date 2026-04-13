@@ -83,9 +83,9 @@ class _State extends State<SchoolSetupScreen> {
           key: _formKey,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             if (widget.isFirstRun) ...[
-              const Text("Let's set up your school", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
+              Text("Let's set up your school", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
               const SizedBox(height: 6),
-              const Text('You can change these settings anytime later.', style: TextStyle(fontSize: 14, color: AppTheme.textSecondary)),
+              Text('You can change these settings anytime later.', style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant)),
               const SizedBox(height: 28),
             ],
             Center(child: GestureDetector(
@@ -94,10 +94,10 @@ class _State extends State<SchoolSetupScreen> {
                 decoration: BoxDecoration(color: AppTheme.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppTheme.border, width: 2)),
                 child: _logoPath != null
                     ? ClipRRect(borderRadius: BorderRadius.circular(14), child: Image.file(File(_logoPath!), fit: BoxFit.cover))
-                    : const Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                        Icon(Icons.camera_alt_outlined, size: 32, color: AppTheme.textSecondary),
-                        SizedBox(height: 4),
-                        Text('Add Logo', style: TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+                    : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                        Icon(Icons.camera_alt_outlined, size: 32, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        const SizedBox(height: 4),
+                        Text('Add Logo', style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                       ]),
               ),
             )),

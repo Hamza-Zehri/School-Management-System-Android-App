@@ -67,8 +67,11 @@ class EmployeeService {
     String newStatus;
     if (newPaid <= 0) {
       newStatus = 'Unpaid';
-    } else if (newPaid >= total) newStatus = 'Paid';
-    else newStatus = 'Partial';
+    } else if (newPaid >= total) {
+      newStatus = 'Paid';
+    } else {
+      newStatus = 'Partial';
+    }
 
     final updated = SalaryRecord(
       id: record.id,
