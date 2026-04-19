@@ -1,6 +1,3 @@
-<p align="center">
-  <img src="assets/images/logo.PNG" alt="School Manager Logo" width="400" />
-</p>
 
 # School Manager — Offline Flutter Android App
 
@@ -199,7 +196,31 @@ App Install
 ```
 
 ---
+<p align="center">
+  <img src="assets/images/logo.PNG" alt="School Manager Logo" width="400" />
+</p>
 
+---
+
+## 📸 Screenshots
+
+<p align="center">
+  <img src="assets/images/1.png" width="180" />
+  <img src="assets/images/2.png" width="180" />
+  <img src="assets/images/3.png" width="180" />
+  <img src="assets/images/4.png" width="180" />
+  <img src="assets/images/5.png" width="180" />
+</p>
+
+<p align="center">
+  <img src="assets/images/6.png" width="180" />
+  <img src="assets/images/7.png" width="180" />
+  <img src="assets/images/8.png" width="180" />
+  <img src="assets/images/9.png" width="180" />
+  <img src="assets/images/10.png" width="180" />
+</p>
+
+---
 ---
 
 Developed by **Engr. Hamza Asad**.
