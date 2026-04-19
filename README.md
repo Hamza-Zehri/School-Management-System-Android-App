@@ -205,19 +205,19 @@ App Install
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="assets/images/1.png" width="180" />
-  <img src="assets/images/2.png" width="180" />
-  <img src="assets/images/3.png" width="180" />
-  <img src="assets/images/4.png" width="180" />
-  <img src="assets/images/5.png" width="180" />
+  <img src="assets/images/1.jpeg" width="180" />
+  <img src="assets/images/2.jpeg" width="180" />
+  <img src="assets/images/3.jpeg" width="180" />
+  <img src="assets/images/4.jpeg" width="180" />
+  <img src="assets/images/5.jpeg" width="180" />
 </p>
 
 <p align="center">
-  <img src="assets/images/6.png" width="180" />
-  <img src="assets/images/7.png" width="180" />
-  <img src="assets/images/8.png" width="180" />
-  <img src="assets/images/9.png" width="180" />
-  <img src="assets/images/10.png" width="180" />
+  <img src="assets/images/6.jpeg" width="180" />
+  <img src="assets/images/7.jpeg" width="180" />
+  <img src="assets/images/8.jpeg" width="180" />
+  <img src="assets/images/9.jpeg" width="180" />
+  <img src="assets/images/10.jpeg" width="180" />
 </p>
 
 ---
