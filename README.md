@@ -1,4 +1,9 @@
+---
+<p align="center">
+  <img src="assets/images/logo.PNG" alt="School Manager Logo" width="250" />
+</p>
 
+---
 # School Manager — Offline Flutter Android App
 
 A complete, 100% offline School Management System for Android, built with Flutter + SQLite.
@@ -195,15 +200,12 @@ App Install
     └─────YES───► Dashboard ◄───┴─────────────────────┘
 ```
 
----
-<p align="center">
-  <img src="assets/images/logo.PNG" alt="School Manager Logo" width="400" />
-</p>
 
----
 
 ## 📸 Screenshots
-
+<p align="center">
+  <img src="assets/images/featuregraphics.PNG" alt="School Manager Feature Graphics" width="250" />
+</p>
 <p align="center">
   <img src="assets/images/1.jpeg" width="150" />
   <img src="assets/images/2.jpeg" width="150" />
