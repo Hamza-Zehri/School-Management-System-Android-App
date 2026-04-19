@@ -204,7 +204,7 @@ App Install
 
 ## 📸 Screenshots
 <p align="center">
-  <img src="assets/images/featuregraphics.PNG" alt="School Manager Feature Graphics" width="250" />
+  <img src="assets/images/featuregraphics.PNG" alt="School Manager Feature Graphics" width="450" />
 </p>
 <p align="center">
   <img src="assets/images/1.jpeg" width="150" />
