@@ -43,7 +43,7 @@ class _State extends ConsumerState<AttendanceScreen> {
     final existingMap = {for (final a in existing) a.studentId: a.status};
     final statusMap = <int, String>{};
     for (final s in students) {
-      statusMap[s.id!] = existingMap[s.id] ?? 'present';
+      statusMap[s.id!] = existingMap[s.id] ?? 'Present';
     }
     setState(() { _students = students; _statusMap = statusMap; });
   }
@@ -51,15 +51,15 @@ class _State extends ConsumerState<AttendanceScreen> {
   Future<void> _saveAttendance() async {
     if (_students.isEmpty) { showSnack(context, 'Load students first', isError: true); return; }
     setState(() => _saving = true);
-    final records = _students.map((s) => Attendance(studentId: s.id!, attendanceDate: _date, status: _statusMap[s.id!] ?? 'present')).toList();
+    final records = _students.map((s) => Attendance(studentId: s.id!, attendanceDate: _date, status: _statusMap[s.id!] ?? 'Present')).toList();
     await ExtendedDatabaseHelper.instance.saveAttendanceBatch(records);
     if (_sendSms) {
-      final absentRecords = records.where((r) => r.status == 'absent').toList();
+      final absentRecords = records.where((r) => r.status == 'Absent').toList();
       // Enrich with student details
       final absentWithDetails = <Attendance>[];
       for (final r in absentRecords) {
         final s = _students.firstWhere((st) => st.id == r.studentId);
-        absentWithDetails.add(Attendance(studentId: r.studentId, attendanceDate: _date, status: 'absent',
+        absentWithDetails.add(Attendance(studentId: r.studentId, attendanceDate: _date, status: 'Absent',
           studentName: s.fullName, guardianPhone: s.guardianPhone,
           className: _classes.firstWhere((c) => c.id == _classId).className,
           sectionName: _sections.firstWhere((sec) => sec.id == _sectionId).sectionName,
@@ -119,9 +119,9 @@ class _State extends ConsumerState<AttendanceScreen> {
             child: Row(children: [
               Text('${_students.length} students', style: const TextStyle(fontWeight: FontWeight.w600)),
               const Spacer(),
-              _quickBtn('All Present', 'present', AppTheme.accent),
+              _quickBtn('All Present', 'Present', AppTheme.accent),
               const SizedBox(width: 6),
-              _quickBtn('All Absent', 'absent', AppTheme.danger),
+              _quickBtn('All Absent', 'Absent', AppTheme.danger),
             ]),
           ),
         Expanded(
@@ -132,7 +132,7 @@ class _State extends ConsumerState<AttendanceScreen> {
                 itemCount: _students.length,
                 itemBuilder: (ctx, i) {
                   final s = _students[i];
-                  final status = _statusMap[s.id!] ?? 'present';
+                  final status = _statusMap[s.id!] ?? 'Present';
                   return Card(
                     margin: const EdgeInsets.only(bottom: 6),
                     child: Padding(
@@ -189,7 +189,7 @@ class _State extends ConsumerState<AttendanceScreen> {
   );
 
   Widget _statusToggle(int studentId, String status) {
-    const statuses = ['present', 'absent', 'late'];
+    const statuses = ['Present', 'Absent', 'Late'];
     return SegmentedButton<String>(
       showSelectedIcon: false,
       segments: statuses.asMap().entries.map((e) => ButtonSegment<String>(

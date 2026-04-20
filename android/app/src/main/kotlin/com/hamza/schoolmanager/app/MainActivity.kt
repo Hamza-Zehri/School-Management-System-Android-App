@@ -1,4 +1,4 @@
-package com.example.school_manager
+package com.hamza.schoolmanager.app
 
 import android.telephony.SmsManager
 import android.os.Build
@@ -8,7 +8,7 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
 
-    private val SMS_CHANNEL = "com.example.school_manager/sms"
+    private val SMS_CHANNEL = "com.hamza.schoolmanager.app/sms"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

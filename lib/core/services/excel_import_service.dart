@@ -51,6 +51,7 @@ class ExcelImportService {
     'section_name',
     'gender',
     'dob',
+    'admission_date',
     'address',
   ];
 
@@ -150,6 +151,7 @@ class ExcelImportService {
             sectionId: sectionId,
             gender: get('gender').isEmpty ? 'Male' : get('gender'),
             dob: get('dob').isEmpty ? null : get('dob'),
+            admissionDate: get('admission_date').isEmpty ? null : get('admission_date'),
             address: get('address').isEmpty ? null : get('address'),
           );
 
@@ -192,7 +194,7 @@ class ExcelImportService {
     final sampleData = [
       'REG-001', 'R001', 'Ahmed Ali', 'Muhammad Ali', 'Muhammad Ali',
       '03001234567', '03009876543', 'Class 1', 'A', 'Male',
-      '2015-01-15', '123 Main Street, Karachi',
+      '2015-01-15', '2024-04-01', '123 Main Street, Karachi',
     ];
     for (int i = 0; i < sampleData.length; i++) {
       sheet.updateCell(

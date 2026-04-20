@@ -49,7 +49,7 @@ class _State extends State<StudentImportScreen> {
             child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [Icon(Icons.info_outline, color: AppTheme.info, size: 18), SizedBox(width: 8), Text('Required Excel Columns', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.info))]),
               SizedBox(height: 8),
-              Text('registration_no, roll_no, full_name, father_name, guardian_name, guardian_phone, guardian_phone_2, class_name, section_name, gender, dob, address',
+              Text('registration_no, roll_no, full_name, father_name, guardian_name, guardian_phone, guardian_phone_2, class_name, section_name, gender, dob, admission_date, address',
                 style: TextStyle(fontSize: 12, color: AppTheme.textSecondary, height: 1.5)),
               SizedBox(height: 8),
               Text('• Classes and sections are created automatically\n• Existing students (by reg no) are updated\n• New students are inserted', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary, height: 1.6)),

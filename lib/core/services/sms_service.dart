@@ -10,7 +10,7 @@ class SmsService {
   static final SmsService instance = SmsService._();
   SmsService._();
 
-  static const _channel = MethodChannel('com.example.school_manager/sms');
+  static const _channel = MethodChannel('com.hamza.schoolmanager.app/sms');
   final ExtendedDatabaseHelper _db = ExtendedDatabaseHelper.instance;
 
   /// Request SMS send permission

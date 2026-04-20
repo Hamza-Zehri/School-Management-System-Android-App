@@ -41,7 +41,7 @@ class FirstLaunchScreen extends StatelessWidget {
               onTap: () => _restoreBackup(context),
             ),
             const Spacer(),
-            Text('Version 1.0.0  •  100% Offline',
+            Text('Version 2.1.0  •  100% Offline',
               style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.5))),
             const SizedBox(height: 8),
           ]),

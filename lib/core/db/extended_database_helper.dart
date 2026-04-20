@@ -560,7 +560,7 @@ class ExtendedDatabaseHelper {
       JOIN students s ON a.student_id = s.id
       JOIN classes c ON s.class_id = c.id
       JOIN sections sec ON s.section_id = sec.id
-      WHERE a.attendance_date = ? AND a.status = 'absent'
+      WHERE a.attendance_date = ? AND a.status = 'Absent'
     ''', [date]);
     return maps.map((m) => Attendance.fromMap(m)).toList();
   }
